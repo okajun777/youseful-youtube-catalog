@@ -6,7 +6,7 @@ export const CATEGORIES = [
   { id: "powerpoint", label: "PowerPoint", color: "#c43e1c" },
   { id: "outlook", label: "Outlook", color: "#0078d4" },
   { id: "teams", label: "Teams", color: "#6264a7" },
-  { id: "copilot", label: "Copilot", color: "#0d9488" },
+  { id: "copilot", label: "Copilot", color: "#e91e8c" },
   { id: "power-automate", label: "Power Automate", color: "#0066ff" },
   { id: "power-bi", label: "Power BI", color: "#f2c811" },
   { id: "power-apps", label: "Power Apps", color: "#742774" },
