@@ -222,6 +222,127 @@ main,
   animation: rise 0.7s ease 0.12s both;
 }
 
+.level-panel {
+  padding: 0.25rem 0 1rem;
+  animation: rise 0.7s ease 0.1s both;
+}
+
+.level-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.level-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.level-blurb {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.levels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.level-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 8px 24px rgba(10, 31, 46, 0.04);
+}
+
+.level-btn:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--lv, var(--accent)) 40%, var(--line));
+}
+
+.level-btn.active {
+  background: color-mix(in srgb, var(--lv, var(--accent)) 12%, white);
+  border-color: color-mix(in srgb, var(--lv, var(--accent)) 55%, var(--line));
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--lv, var(--accent)) 18%, transparent);
+}
+
+.level-btn-label {
+  display: block;
+  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--lv, var(--ink));
+}
+
+.level-btn-count {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.level-btn-count::after {
+  content: " 本";
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.level-chip {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  color: var(--lv, var(--accent));
+  background: color-mix(in srgb, var(--lv, var(--accent)) 14%, white);
+  border: 1px solid color-mix(in srgb, var(--lv, var(--accent)) 28%, white);
+}
+
+.badge-pick {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  background: #0e7c66;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.28rem 0.55rem;
+  border-radius: 6px;
+}
+
+.video-card.is-pick {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+}
+
+@media (max-width: 720px) {
+  .levels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .cat-btn {
   appearance: none;
   border: 1px solid var(--line);

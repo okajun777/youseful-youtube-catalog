@@ -16,20 +16,35 @@ const CATEGORIES = [
   { id: "other", label: "その他", color: "#64748b" },
 ];
 
+const LEVELS = [
+  { id: "all", label: "すべて", color: "#0b3d5c", blurb: "自分のレベルに合う動画から始められます。" },
+  { id: "beginner", label: "初心者", color: "#0e7c66", blurb: "基礎・入門から安心して学べるおすすめ動画" },
+  { id: "intermediate", label: "中級者", color: "#c27803", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
+  { id: "advanced", label: "上級者", color: "#b91c1c", blurb: "応用・自動化・深い使いこなしのおすすめ" },
+];
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 const POLL_MS = 60 * 1000;
+const FEATURED_COUNT = 8;
+
+const BEGINNER_RE = /超入門|初心者|はじめて|初めて|ゼロから|0から|基礎から|基本から|初級|入門|基礎解説|基本知識|10分でわかる|教科書/;
+const ADVANCED_RE = /上級|応用|発展|API|VBA|マクロ(?!不要)|徹底攻略|完全攻略|プロ向け|高度な/;
+const INTERMEDIATE_RE = /中級|実践|活用術|時短|神ワザ|便利技|テクニック|効率化|業務改善|最新活用/;
 
 const state = {
   videos: [],
   syncedAt: null,
   category: "all",
+  level: "all",
   query: "",
-  sort: "new",
+  sort: "recommend",
   hasApi: false,
 };
 
 const els = {
   categories: document.getElementById("categories"),
+  levels: document.getElementById("levels"),
+  levelBlurb: document.getElementById("levelBlurb"),
   grid: document.getElementById("videoGrid"),
   empty: document.getElementById("empty"),
   meta: document.getElementById("resultMeta"),
@@ -38,6 +53,47 @@ const els = {
   sort: document.getElementById("sort"),
   btnSync: document.getElementById("btnSync"),
 };
+
+function detectLevel(title = "") {
+  const t = title;
+  const hasBeginner = BEGINNER_RE.test(t);
+  const hasAdvanced = ADVANCED_RE.test(t);
+  const hasIntermediate = INTERMEDIATE_RE.test(t);
+  if (hasAdvanced && !hasBeginner) return "advanced";
+  if (hasBeginner && !hasAdvanced) return "beginner";
+  if (hasAdvanced && hasBeginner) return "intermediate";
+  if (hasIntermediate) return "intermediate";
+  if (/excel|エクセル|teams|outlook|copilot|word|powerpoint|パワー|sharepoint|onedrive|planner|forms|onenote/i.test(t)) {
+    return "intermediate";
+  }
+  return "beginner";
+}
+
+function scoreVideo(video, level) {
+  if (typeof video.recommendScore === "number" && level === video.level) {
+    // 同期時スコアをベースに、選択レベル用の微調整のみ
+  }
+  const views = Number(video.views) || 0;
+  const viewScore = Math.log10(views + 10) * 12;
+  const ageDays = video.publishedAt
+    ? Math.max(0, (Date.now() - Date.parse(video.publishedAt)) / 864e5)
+    : 900;
+  const freshScore = Math.max(0, 18 - ageDays / 30);
+  const title = video.title || "";
+  let keywordBoost = 0;
+  if (level === "beginner" && /超入門|初心者|入門|基礎|教科書/.test(title)) keywordBoost += 10;
+  if (level === "intermediate" && /時短|活用|神ワザ|便利|実践|テクニック/.test(title)) keywordBoost += 10;
+  if (level === "advanced" && /応用|上級|API|VBA|徹底攻略|完全攻略/.test(title)) keywordBoost += 10;
+  if (video.category && video.category !== "other") keywordBoost += 3;
+  return viewScore + freshScore + keywordBoost;
+}
+
+function withLevels(videos) {
+  return videos.map((v) => {
+    const level = v.level || detectLevel(v.title);
+    return { ...v, level, _score: scoreVideo({ ...v, level }, level) };
+  });
+}
 
 function isNew(video) {
   if (!video.publishedAt) return false;
@@ -48,6 +104,10 @@ function isNew(video) {
 
 function catMeta(id) {
   return CATEGORIES.find((c) => c.id === id) || CATEGORIES.at(-1);
+}
+
+function levelMeta(id) {
+  return LEVELS.find((l) => l.id === id) || LEVELS[0];
 }
 
 function formatDate(iso) {
@@ -82,8 +142,30 @@ function countsByCategory(videos) {
   return counts;
 }
 
+function countsByLevel(videos) {
+  const counts = { all: videos.length, beginner: 0, intermediate: 0, advanced: 0 };
+  for (const v of videos) {
+    if (counts[v.level] != null) counts[v.level] += 1;
+  }
+  return counts;
+}
+
+function renderLevels() {
+  const counts = countsByLevel(state.videos);
+  els.levels.innerHTML = LEVELS.map((l) => {
+    const active = state.level === l.id ? "active" : "";
+    const count = counts[l.id] ?? 0;
+    return `<button type="button" class="level-btn ${active}" data-level="${l.id}" style="--lv:${l.color}">
+      <span class="level-btn-label">${l.label}</span>
+      <span class="level-btn-count">${count}</span>
+    </button>`;
+  }).join("");
+  els.levelBlurb.textContent = levelMeta(state.level).blurb;
+}
+
 function renderCategories() {
-  const counts = countsByCategory(state.videos);
+  const base = state.level === "all" ? state.videos : state.videos.filter((v) => v.level === state.level);
+  const counts = countsByCategory(base);
   const visible = CATEGORIES.filter((c) => c.id === "all" || counts[c.id] > 0);
   els.categories.innerHTML = visible
     .map((c) => {
@@ -98,14 +180,19 @@ function renderCategories() {
 function filteredVideos() {
   const q = state.query.trim().toLowerCase();
   let list = state.videos.filter((v) => {
+    if (state.level !== "all" && v.level !== state.level) return false;
     if (state.category !== "all" && v.category !== state.category) return false;
     if (!q) return true;
     return (v.title || "").toLowerCase().includes(q);
   });
 
+  const levelForScore = state.level === "all" ? "intermediate" : state.level;
   list = [...list].sort((a, b) => {
     if (state.sort === "title") return (a.title || "").localeCompare(b.title || "", "ja");
     if (state.sort === "views") return (b.views || 0) - (a.views || 0);
+    if (state.sort === "recommend") {
+      return scoreVideo(b, levelForScore) - scoreVideo(a, levelForScore);
+    }
     const ta = a.publishedAt ? Date.parse(a.publishedAt) : 0;
     const tb = b.publishedAt ? Date.parse(b.publishedAt) : 0;
     return state.sort === "old" ? ta - tb : tb - ta;
@@ -117,24 +204,34 @@ function filteredVideos() {
 function renderVideos() {
   const list = filteredVideos();
   const newCount = list.filter(isNew).length;
-  els.meta.textContent = `${list.length} 本表示` + (newCount ? ` ／ 最新 ${newCount} 本` : "");
+  const lv = levelMeta(state.level);
+  const featured = state.level !== "all" && state.sort === "recommend";
+  const prefix = featured ? `${lv.label}へのおすすめ ` : "";
+  els.meta.textContent =
+    `${prefix}${list.length} 本表示` + (newCount ? ` ／ 最新 ${newCount} 本` : "");
   els.empty.hidden = list.length > 0;
 
   els.grid.innerHTML = list
     .map((v, i) => {
       const cat = catMeta(v.category);
+      const lvMeta = levelMeta(v.level);
       const neu = isNew(v);
       const views = formatViews(v.views);
       const metaBits = [formatDate(v.publishedAt), views].filter(Boolean).join(" · ");
+      const pick = featured && i < FEATURED_COUNT;
       return `
-        <a class="video-card" href="${v.url}" target="_blank" rel="noopener" style="animation-delay:${Math.min(i, 12) * 0.03}s">
+        <a class="video-card ${pick ? "is-pick" : ""}" href="${v.url}" target="_blank" rel="noopener" style="animation-delay:${Math.min(i, 12) * 0.03}s">
           <div class="thumb-wrap">
             <img src="${v.thumbnail}" alt="" loading="lazy" width="480" height="270" />
             ${neu ? `<span class="badge-new">最新</span>` : ""}
+            ${pick ? `<span class="badge-pick">おすすめ</span>` : ""}
             ${v.duration ? `<span class="duration">${v.duration}</span>` : ""}
           </div>
           <div class="card-body">
-            <span class="cat-chip" style="--cat:${cat.color}">${cat.label}</span>
+            <div class="chip-row">
+              <span class="cat-chip" style="--cat:${cat.color}">${cat.label}</span>
+              <span class="level-chip" style="--lv:${lvMeta.color}">${lvMeta.label}</span>
+            </div>
             <h2 class="card-title">${escapeHtml(v.title)}</h2>
             <p class="card-meta">${escapeHtml(metaBits)}</p>
           </div>
@@ -152,6 +249,7 @@ function escapeHtml(s) {
 }
 
 function renderAll() {
+  renderLevels();
   renderCategories();
   renderVideos();
   els.syncStatus.textContent = formatSynced(state.syncedAt);
@@ -179,7 +277,7 @@ async function fetchVideosPayload() {
 async function loadVideos() {
   const data = await fetchVideosPayload();
   const prevIds = new Set(state.videos.map((v) => v.id));
-  state.videos = data.videos || [];
+  state.videos = withLevels(data.videos || []);
   state.syncedAt = data.syncedAt;
   renderAll();
 
@@ -217,6 +315,15 @@ async function manualSync() {
     els.btnSync.disabled = false;
   }
 }
+
+els.levels.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-level]");
+  if (!btn) return;
+  state.level = btn.dataset.level;
+  if (state.level !== "all") state.sort = "recommend";
+  els.sort.value = state.sort;
+  renderAll();
+});
 
 els.categories.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-id]");

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { categorizeVideo } from "./categories.mjs";
+import { categorizeVideo, rankLevel, recommendScore } from "./categories.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -232,16 +232,22 @@ function mergeVideos(existing, incoming) {
       // RSS の正確な日時を優先するため source も保持
       source: v.source === "rss" || prev.source === "rss" ? "rss" : v.source || prev.source,
       category: categorizeVideo(v.title || prev.title),
+      level: rankLevel(v.title || prev.title),
       firstSeenAt: prev.firstSeenAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
   }
 
   return [...map.values()]
-    .map((v) => ({
-      ...v,
-      category: categorizeVideo(v.title),
-    }))
+    .map((v) => {
+      const level = rankLevel(v.title);
+      return {
+        ...v,
+        category: categorizeVideo(v.title),
+        level,
+        recommendScore: Math.round(recommendScore({ ...v, level }, level) * 10) / 10,
+      };
+    })
     .sort((a, b) => {
       const ta = a.publishedAt ? Date.parse(a.publishedAt) : 0;
       const tb = b.publishedAt ? Date.parse(b.publishedAt) : 0;

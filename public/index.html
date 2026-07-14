@@ -18,7 +18,7 @@
     <div class="brand-block">
       <p class="brand-eyebrow">YouTube Catalog</p>
       <h1 class="brand">ユースフル</h1>
-      <p class="tagline">Microsoft 365 実務変革の動画を、製品カテゴリ別にすぐ見つけられる。</p>
+      <p class="tagline">Microsoft 365 実務変革の動画を、製品カテゴリ・レベル別におすすめ表示。</p>
     </div>
     <div class="header-meta">
       <a class="channel-link" href="https://www.youtube.com/@youseful" target="_blank" rel="noopener">チャンネルを開く</a>
@@ -34,6 +34,7 @@
     <div class="sort-wrap">
       <label for="sort">並び替え</label>
       <select id="sort">
+        <option value="recommend">おすすめ順</option>
         <option value="new">新しい順</option>
         <option value="old">古い順</option>
         <option value="views">再生数順</option>
@@ -41,6 +42,14 @@
       </select>
     </div>
     <button type="button" class="btn-sync" id="btnSync" title="最新データを再読み込み">再読み込み</button>
+  </section>
+
+  <section class="level-panel" aria-label="レベル別おすすめ">
+    <div class="level-head">
+      <h2 class="level-title">レベル別おすすめ</h2>
+      <p class="level-blurb" id="levelBlurb">自分のレベルに合う動画から始められます。</p>
+    </div>
+    <nav class="levels" id="levels"></nav>
   </section>
 
   <nav class="categories" id="categories" aria-label="製品カテゴリ"></nav>

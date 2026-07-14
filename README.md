@@ -11,6 +11,7 @@ GitHub Actions が約30分ごとに YouTube を確認し、サイトを更新し
 ## 機能
 
 - **製品カテゴリ分け**: Excel / Word / PowerPoint / Outlook / Teams / Copilot / Power Automate など
+- **レベル別おすすめ**: 初心者 / 中級者 / 上級者向けのおすすめ順表示
 - **「最新」バッジ**: 公開から **24時間以内** の動画に表示
 - **自動更新（公開サイト）**: 約30分ごと
 - **ローカル**: `npm start` で約5分ごとの取り込みも可能
