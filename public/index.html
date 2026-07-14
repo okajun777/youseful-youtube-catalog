@@ -37,6 +37,12 @@
     </div>
     <div class="toolbar-side">
       <div class="sort-wrap">
+        <label for="instructorSelect">講師</label>
+        <select id="instructorSelect">
+          <option value="all">すべて</option>
+        </select>
+      </div>
+      <div class="sort-wrap">
         <label for="sort">並び替え</label>
         <select id="sort">
           <option value="recommend">おすすめ順</option>
@@ -63,13 +69,6 @@
       <h2 class="level-title">製品カテゴリ</h2>
     </div>
     <nav class="categories" id="categories"></nav>
-  </section>
-
-  <section class="category-panel shell" aria-label="講師">
-    <div class="level-head compact">
-      <h2 class="level-title">講師</h2>
-    </div>
-    <nav class="categories instructors" id="instructors"></nav>
   </section>
 
   <main class="shell">

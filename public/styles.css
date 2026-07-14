@@ -233,6 +233,7 @@ main,
 .sort-wrap select {
   width: auto;
   min-width: 8.5rem;
+  max-width: 14rem;
 }
 
 .level-panel,

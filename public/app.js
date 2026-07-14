@@ -57,7 +57,7 @@ const state = {
 
 const els = {
   categories: document.getElementById("categories"),
-  instructors: document.getElementById("instructors"),
+  instructors: document.getElementById("instructorSelect"),
   levels: document.getElementById("levels"),
   levelBlurb: document.getElementById("levelBlurb"),
   grid: document.getElementById("videoGrid"),
@@ -298,20 +298,16 @@ function renderInstructors() {
     .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b, "ja"));
 
   const items = [
-    { id: "all", label: "すべて", color: "#1a2433", count: counts.all },
+    { id: "all", label: `すべて（${counts.all}）` },
     ...names.map((name) => ({
       id: name,
-      label: name,
-      color: instructorColor(name),
-      count: counts[name],
+      label: `${name}（${counts[name]}）`,
     })),
   ];
   if (counts[UNKNOWN_INSTRUCTOR] > 0) {
     items.push({
       id: UNKNOWN_INSTRUCTOR,
-      label: UNKNOWN_INSTRUCTOR,
-      color: "#64748b",
-      count: counts[UNKNOWN_INSTRUCTOR],
+      label: `${UNKNOWN_INSTRUCTOR}（${counts[UNKNOWN_INSTRUCTOR]}）`,
     });
   }
 
@@ -320,13 +316,10 @@ function renderInstructors() {
   }
 
   els.instructors.innerHTML = items
-    .map((item) => {
-      const active = state.instructor === item.id ? "active" : "";
-      return `<button type="button" class="cat-btn ${active}" data-instructor="${escapeHtml(item.id)}" style="--cat:${item.color}">
-        <span class="cat-btn-label">${escapeHtml(item.label)}</span>
-        <span class="cat-btn-count">${item.count}</span>
-      </button>`;
-    })
+    .map(
+      (item) =>
+        `<option value="${escapeHtml(item.id)}"${state.instructor === item.id ? " selected" : ""}>${escapeHtml(item.label)}</option>`
+    )
     .join("");
 }
 
@@ -504,11 +497,9 @@ els.categories.addEventListener("click", (e) => {
   renderAll();
 });
 
-els.instructors.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-instructor]");
-  if (!btn) return;
-  state.instructor = btn.dataset.instructor;
-  renderAll();
+els.instructors.addEventListener("change", () => {
+  state.instructor = els.instructors.value;
+  renderVideos();
 });
 
 els.search.addEventListener("input", () => {
