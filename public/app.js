@@ -17,10 +17,10 @@ const CATEGORIES = [
 ];
 
 const LEVELS = [
-  { id: "all", label: "すべて", color: "#0b3041", blurb: "自分のレベルに合う動画から始められます。" },
-  { id: "beginner", label: "初心者", color: "#f99330", blurb: "基礎・入門から安心して学べるおすすめ動画" },
-  { id: "intermediate", label: "中級者", color: "#0b3041", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
-  { id: "advanced", label: "上級者", color: "#e07a18", blurb: "応用・自動化・深い使いこなしのおすすめ" },
+  { id: "all", label: "すべて", hint: "全レベル", color: "#0b3041", blurb: "自分のレベルに合う動画から始められます。" },
+  { id: "beginner", label: "初心者", hint: "入門・基礎", color: "#f99330", blurb: "基礎・入門から安心して学べるおすすめ動画" },
+  { id: "intermediate", label: "中級者", hint: "時短・活用", color: "#0b3041", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
+  { id: "advanced", label: "上級者", hint: "応用・攻略", color: "#e07a18", blurb: "応用・自動化・深い使いこなしのおすすめ" },
 ];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -152,12 +152,17 @@ function countsByLevel(videos) {
 
 function renderLevels() {
   const counts = countsByLevel(state.videos);
-  els.levels.innerHTML = LEVELS.map((l) => {
+  els.levels.innerHTML = LEVELS.map((l, i) => {
     const active = state.level === l.id ? "active" : "";
     const count = counts[l.id] ?? 0;
+    const num = String(i + 1).padStart(2, "0");
     return `<button type="button" class="level-btn ${active}" data-level="${l.id}" style="--lv:${l.color}">
-      <span class="level-btn-label">${l.label}</span>
-      <span class="level-btn-count">${count}</span>
+      <span class="level-btn-index">${num}</span>
+      <span class="level-btn-body">
+        <span class="level-btn-label">${l.label}</span>
+        <span class="level-btn-hint">${l.hint}</span>
+      </span>
+      <span class="level-btn-count"><strong>${count}</strong><small>本</small></span>
     </button>`;
   }).join("");
   els.levelBlurb.textContent = levelMeta(state.level).blurb;
