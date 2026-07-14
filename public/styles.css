@@ -405,12 +405,13 @@ main,
   background: #fff;
   color: var(--ink);
   font: inherit;
-  padding: 0.55rem 1rem;
+  padding: 0.55rem 0.9rem;
   border-radius: 999px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
   text-align: center;
   transition:
     transform 0.25s var(--ease),
@@ -436,6 +437,18 @@ main,
   font-size: 0.88rem;
   letter-spacing: -0.01em;
   line-height: 1.2;
+}
+
+.cat-btn-count {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  line-height: 1;
+}
+
+.cat-btn.active .cat-btn-count {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .result-meta {
