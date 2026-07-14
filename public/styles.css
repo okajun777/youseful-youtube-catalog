@@ -359,7 +359,7 @@ main,
   appearance: none;
   border: 1px solid color-mix(in srgb, var(--lv, var(--ink)) 32%, #fff);
   background: color-mix(in srgb, var(--lv, var(--ink)) 10%, #fff);
-  padding: 0.4rem 1.3rem 0.38rem;
+  padding: 0.4rem calc(100% / 3) 0.38rem;
   cursor: pointer;
   text-align: left;
   font: inherit;
@@ -372,6 +372,7 @@ main,
   gap: 0.25rem 0.4rem;
   align-items: center;
   min-height: 0;
+  box-sizing: border-box;
   transition:
     transform 0.25s var(--ease),
     border-color 0.2s ease,
@@ -743,7 +744,7 @@ main,
 
   .level-btn {
     min-height: 0;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem calc(100% / 3);
   }
 }
 
