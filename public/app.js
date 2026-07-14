@@ -175,8 +175,9 @@ function renderCategories() {
   els.categories.innerHTML = visible
     .map((c) => {
       const active = state.category === c.id ? "active" : "";
-      return `<button type="button" class="cat-btn ${active}" data-id="${c.id}" style="--cat:${c.color}">
-        ${c.label}<span class="count">${counts[c.id] || 0}</span>
+      return `<button type="button" class="cat-btn ${active}" data-id="${c.id}">
+        <span class="cat-btn-label">${c.label}</span>
+        <span class="cat-btn-count"><strong>${counts[c.id] || 0}</strong><small>本</small></span>
       </button>`;
     })
     .join("");
