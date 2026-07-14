@@ -353,6 +353,8 @@ main,
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.35rem;
+  margin-inline: 4%;
+  width: auto;
 }
 
 .level-btn {
