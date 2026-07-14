@@ -23,7 +23,7 @@ const LEVELS = [
   { id: "advanced", label: "上級者", hint: "応用・攻略", color: "#1a2433", blurb: "応用・自動化・深い使いこなしのおすすめ" },
 ];
 
-const DAY_MS = 24 * 60 * 60 * 1000;
+const NEW_MS = 36 * 60 * 60 * 1000;
 const POLL_MS = 60 * 1000;
 const FEATURED_COUNT = 8;
 
@@ -99,7 +99,7 @@ function isNew(video) {
   if (!video.publishedAt) return false;
   const t = Date.parse(video.publishedAt);
   if (Number.isNaN(t)) return false;
-  return Date.now() - t < DAY_MS;
+  return Date.now() - t < NEW_MS;
 }
 
 function catMeta(id) {
