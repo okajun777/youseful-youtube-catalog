@@ -96,9 +96,9 @@ main,
 .site-header {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: end;
-  padding: 1.1rem 0 0.75rem;
+  gap: 0.65rem 1rem;
+  align-items: center;
+  padding: 0.45rem 0 0.35rem;
 }
 
 @keyframes rise {
@@ -109,49 +109,41 @@ main,
 .brand-row {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 
 .brand-mark {
-  width: 42px;
-  height: 42px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   flex: 0 0 auto;
 }
 
 .brand-eyebrow {
-  margin: 0 0 0.15rem;
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  font-weight: 700;
+  display: none;
 }
 
 .brand {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2rem, 5vw, 2.85rem);
+  font-size: 1.35rem;
   letter-spacing: -0.04em;
   line-height: 1;
   color: var(--ink);
 }
 
 .tagline {
-  margin: 0.35rem 0 0;
-  max-width: 28rem;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-  font-weight: 500;
+  display: none;
 }
 
 .header-meta {
   text-align: right;
-  display: grid;
-  gap: 0.35rem;
-  justify-items: end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .channel-link,
@@ -163,8 +155,8 @@ main,
   font-weight: 700;
   text-decoration: none;
   border-radius: 4px;
-  padding: 0.5rem 0.85rem;
-  font-size: 0.88rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
   letter-spacing: 0.02em;
   transition: transform 0.25s var(--ease), background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
@@ -177,7 +169,7 @@ main,
 
 .channel-link:hover,
 .btn-sync:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .btn-sync {
@@ -200,7 +192,7 @@ main,
 
 .sync-status {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: var(--ink-soft);
   letter-spacing: 0.01em;
 }
@@ -208,34 +200,34 @@ main,
 .toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem 0.5rem;
   align-items: stretch;
-  padding: 0.15rem 0 0.75rem;
+  padding: 0 0 0.4rem;
 }
 
 .toolbar-side {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.35rem 0.45rem;
   align-items: stretch;
 }
 
 .search-wrap {
-  flex: 1 1 200px;
+  flex: 1 1 180px;
 }
 
 .search-wrap input,
 .sort-wrap select {
   width: 100%;
   height: 100%;
-  min-height: 2.4rem;
+  min-height: 2rem;
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
   border-radius: 0;
-  padding: 0.4rem 0.1rem;
+  padding: 0.2rem 0.1rem;
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   color: var(--ink);
   outline: none;
   transition: border-color 0.2s ease;
@@ -249,34 +241,34 @@ main,
 .sort-wrap {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  font-size: 0.84rem;
+  gap: 0.4rem;
+  font-size: 0.78rem;
   color: var(--ink-soft);
 }
 
 .sort-wrap select {
   width: auto;
-  min-width: 8.5rem;
-  max-width: 14rem;
+  min-width: 7.5rem;
+  max-width: 13rem;
 }
 
 .level-panel,
 .category-panel {
-  padding: 0 0 0.75rem;
+  padding: 0 0 0.4rem;
 }
 
 .category-panel {
-  padding-bottom: 0.85rem;
+  padding-bottom: 0.5rem;
 }
 
 .level-head {
   display: grid;
-  gap: 0.35rem;
-  margin-bottom: 0.55rem;
+  gap: 0.2rem;
+  margin-bottom: 0.35rem;
 }
 
 .level-head.compact {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.3rem;
 }
 
 .panel-toggle {
@@ -297,14 +289,14 @@ main,
 
 .panel-toggle-label {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .panel-toggle-meta {
   margin-left: auto;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--ink-soft);
   font-family: var(--font-display);
@@ -341,7 +333,7 @@ main,
 .level-title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -349,30 +341,30 @@ main,
 .level-blurb {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
 }
 
 .levels {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .level-btn {
   appearance: none;
   border: 1px solid color-mix(in srgb, var(--lv, var(--ink)) 32%, #fff);
   background: color-mix(in srgb, var(--lv, var(--ink)) 10%, #fff);
-  padding: 0.65rem 0.7rem 0.6rem;
+  padding: 0.4rem 0.5rem 0.38rem;
   cursor: pointer;
   text-align: left;
   font: inherit;
   color: var(--ink);
   position: relative;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 8px;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 0.4rem 0.5rem;
+  gap: 0.25rem 0.4rem;
   align-items: center;
   min-height: 0;
   transition:
@@ -402,12 +394,12 @@ main,
 
 .level-btn-index {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: color-mix(in srgb, var(--lv, var(--ink-soft)) 70%, var(--ink-soft));
   align-self: start;
-  padding-top: 0.1rem;
+  padding-top: 0.05rem;
 }
 
 .level-btn.active .level-btn-index {
@@ -416,25 +408,25 @@ main,
 
 .level-btn-body {
   display: grid;
-  gap: 0.2rem;
+  gap: 0.05rem;
   min-width: 0;
 }
 
 .level-btn-label {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
   font-weight: 800;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.88rem;
   letter-spacing: -0.02em;
   line-height: 1.15;
   color: var(--lv, var(--ink));
 }
 
 .level-dot {
-  width: 0.55rem;
-  height: 0.55rem;
+  width: 0.45rem;
+  height: 0.45rem;
   border-radius: 50%;
   background: var(--lv, var(--ink));
   flex: 0 0 auto;
@@ -451,7 +443,7 @@ main,
 
 .level-btn-hint {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   color: var(--ink-soft);
   letter-spacing: 0.01em;
 }
@@ -470,14 +462,14 @@ main,
 }
 
 .level-btn-count strong {
-  font-size: 1.05rem;
+  font-size: 0.92rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--lv, var(--ink));
 }
 
 .level-btn-count small {
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   color: var(--ink-soft);
   letter-spacing: 0.08em;
 }
@@ -493,7 +485,7 @@ main,
 .categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .cat-btn {
@@ -502,13 +494,13 @@ main,
   background: color-mix(in srgb, var(--cat, var(--ink)) 10%, #fff);
   color: var(--cat, var(--ink));
   font: inherit;
-  padding: 0.55rem 0.9rem;
+  padding: 0.35rem 0.7rem;
   border-radius: 999px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: 0.3rem;
   text-align: center;
   transition:
     transform 0.25s var(--ease),
@@ -532,14 +524,14 @@ main,
 .cat-btn-label {
   font-weight: 700;
   font-family: var(--font-display);
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
 .cat-btn-count {
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: color-mix(in srgb, var(--cat, var(--ink-soft)) 55%, var(--ink-soft));
   line-height: 1;
@@ -753,11 +745,11 @@ main,
 @media (max-width: 720px) {
   .site-header {
     grid-template-columns: 1fr;
-    padding-top: 1rem;
+    padding-top: 0.4rem;
   }
 
   .header-meta {
-    justify-items: start;
+    justify-content: flex-start;
     text-align: left;
   }
 }
