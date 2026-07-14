@@ -27,6 +27,21 @@ const NEW_MS = 36 * 60 * 60 * 1000;
 const FEATURED_COUNT = 8;
 const UNKNOWN_INSTRUCTOR = "不明";
 
+const INSTRUCTOR_META = {
+  なかけん: { formal: "中田 研介", aliases: ["なかけん", "中田研介", "中田 研介", "Nakata Kensuke", "Nakata", "kensuke", "なかた"] },
+  あっきー: { formal: "秋山 望美", aliases: ["あっきー", "秋山望美", "秋山 望美", "Akiyama Nozomi", "Akiyama", "Nozomi", "あきやま"] },
+  "おおはら しょうた": { formal: "大原 翔太", aliases: ["おおはら", "おおはらしょうた", "大原翔太", "大原 翔太", "Ohara Shota", "Ohara", "Shota"] },
+  とばちゃん: { formal: "鳥羽", aliases: ["とばちゃん", "とば", "鳥羽", "Toba"] },
+  はじめ: { formal: "五十川 元", aliases: ["はじめ", "五十川元", "五十川 元", "Isogawa Hajime", "Isogawa", "Hajime", "いそがわ"] },
+  りんたろう: { formal: "大垣 凜太郎", aliases: ["りんたろう", "大垣凜太郎", "大垣 凜太郎", "大垣凛太郎", "Ohgaki Rintaro", "Ohgaki", "Rintaro", "おおがき"] },
+  よーた: { formal: "神川 陽太", aliases: ["よーた", "ようた", "神川陽太", "神川 陽太", "Kamikawa Yota", "Kamikawa", "Yota", "かみかわ"] },
+  "濱津 太一": { formal: "濱津 太一", aliases: ["濱津太一", "濱津 太一", "浜津太一", "浜津 太一", "Hamatsu", "たいち"] },
+  "片原 唯伽": { formal: "片原 唯伽", aliases: ["片原唯伽", "片原 唯伽", "Katahara Yuika", "Katahara", "Yuika", "かたはら"] },
+  "渡部 壮": { formal: "渡部 壮", aliases: ["渡部壮", "渡部 壮", "Watanabe Sou", "Watanabe", "わたなべ"] },
+  "さわだ さき": { formal: "澤田 咲", aliases: ["さわだ", "さわださき", "澤田咲", "澤田 咲", "沢田", "Sawada"] },
+  おさ: { formal: "長内 孝平", aliases: ["おさ", "長内孝平", "長内 孝平", "Osanai", "おさない"] },
+};
+
 const INSTRUCTOR_COLORS = [
   "#0f766e",
   "#b45309",
@@ -144,6 +159,30 @@ function instructorColor(label = "") {
 function videoInstructors(video) {
   if (Array.isArray(video.instructors) && video.instructors.length) return video.instructors;
   return [];
+}
+
+function instructorDisplayName(label = "") {
+  const meta = INSTRUCTOR_META[label];
+  if (meta?.formal && meta.formal !== label) return `${label}（${meta.formal}）`;
+  return label;
+}
+
+function instructorHaystack(video) {
+  if (video.instructorSearch) return String(video.instructorSearch);
+  const parts = [];
+  for (const label of videoInstructors(video)) {
+    parts.push(label);
+    const meta = INSTRUCTOR_META[label];
+    if (meta) {
+      if (meta.formal) parts.push(meta.formal);
+      parts.push(...(meta.aliases || []));
+    }
+  }
+  return parts.join(" ");
+}
+
+function normalizeSearch(s = "") {
+  return String(s).toLowerCase().replace(/\s+/g, "");
 }
 
 function scoreVideo(video, level) {
@@ -335,7 +374,7 @@ function renderInstructors() {
     { id: "all", label: `すべて（${counts.all}）` },
     ...names.map((name) => ({
       id: name,
-      label: `${name}（${counts[name]}）`,
+      label: `${instructorDisplayName(name)}（${counts[name]}）`,
     })),
   ];
   if (counts[UNKNOWN_INSTRUCTOR] > 0) {
@@ -359,6 +398,7 @@ function renderInstructors() {
 
 function filteredVideos() {
   const q = state.query.trim().toLowerCase();
+  const qPacked = normalizeSearch(state.query);
   let list = state.videos.filter((v) => {
     if (state.level !== "all" && v.level !== state.level) return false;
     if (state.category !== "all" && !videoCategories(v).includes(state.category)) return false;
@@ -369,8 +409,10 @@ function filteredVideos() {
       if (!instructors.includes(state.instructor)) return false;
     }
     if (!q) return true;
-    const hay = `${v.title || ""} ${instructors.join(" ")}`.toLowerCase();
-    return hay.includes(q);
+    const hay = `${v.title || ""} ${instructorHaystack(v)}`.toLowerCase();
+    if (hay.includes(q)) return true;
+    // スペース有無を無視（「中田研介」「中田 研介」両対応）
+    return normalizeSearch(hay).includes(qPacked);
   });
 
   const levelForScore = state.level === "all" ? "intermediate" : state.level;
@@ -409,7 +451,7 @@ function renderVideos() {
       const instructorChips = instructors
         .map(
           (name) =>
-            `<span class="instructor-chip" style="--chip:${instructorColor(name)}">${escapeHtml(name)}</span>`
+            `<span class="instructor-chip" style="--chip:${instructorColor(name)}" title="${escapeHtml(instructorDisplayName(name))}">${escapeHtml(name)}</span>`
         )
         .join("");
       const pick = featured && i < FEATURED_COUNT;

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { categorizeVideo, categorizeAll, rankLevel, recommendScore } from "./categories.mjs";
-import { extractInstructors } from "./instructors.mjs";
+import { extractInstructors, instructorSearchText } from "./instructors.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -53,9 +53,13 @@ function saveData(data) {
     ...data,
     videos: (data.videos || []).map((v) => {
       const { description, ...rest } = v;
+      const instructors = Array.isArray(v.instructors)
+        ? v.instructors
+        : extractInstructors(description || "");
       return {
         ...rest,
-        instructors: Array.isArray(v.instructors) ? v.instructors : extractInstructors(description || ""),
+        instructors,
+        instructorSearch: instructorSearchText(instructors),
         descFetched: Boolean(v.descFetched) || Boolean((description || "").trim()),
       };
     }),
