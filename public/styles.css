@@ -8,8 +8,8 @@
   --accent-deep: #1a2433;
   --new: #1a2433;
   --radius: 8px;
-  --font-display: "Bricolage Grotesque", "Zen Kaku Gothic New", sans-serif;
-  --font-body: "Zen Kaku Gothic New", sans-serif;
+  --font-display: "Meiryo UI", Meiryo, sans-serif;
+  --font-body: "Meiryo UI", Meiryo, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
