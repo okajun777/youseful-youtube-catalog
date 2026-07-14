@@ -54,6 +54,55 @@ const els = {
   btnSync: document.getElementById("btnSync"),
 };
 
+const PRODUCT_RULES = [
+  { id: "power-automate", patterns: [/power\s*automate/i, /パワーオートメイト/i, /パワー\s*オート/i] },
+  { id: "power-bi", patterns: [/power\s*bi/i, /パワー\s*bi/i, /パワーbi/i] },
+  { id: "power-apps", patterns: [/power\s*apps?/i, /パワーアプリ/i] },
+  { id: "copilot", patterns: [/copilot/i, /コパイロット/] },
+  { id: "teams", patterns: [/\bteams\b/i, /チームズ/] },
+  { id: "excel", patterns: [/\bexcel\b/i, /エクセル/] },
+  { id: "powerpoint", patterns: [/power\s*point/i, /パワーポイント/, /\bpptx?\b/i] },
+  { id: "outlook", patterns: [/outlook/i, /アウトルック/] },
+  { id: "word", patterns: [/\bword\b/i, /(?<!パス)ワード(?!プ)/] },
+  { id: "sharepoint", patterns: [/share\s*point/i, /onedrive/i, /ワンドライブ/i, /シェアポイント/] },
+  { id: "planner", patterns: [/\bplanner\b/i, /プランナー/, /microsoft\s*to\s*do/i] },
+  { id: "forms", patterns: [/microsoft\s*forms/i, /マイクロソフト\s*forms/i, /マイクロソフト\s*loop/i] },
+  { id: "onenote", patterns: [/onenote/i, /ワンノート/] },
+];
+
+function detectCategories(title = "") {
+  const hits = [];
+  for (const rule of PRODUCT_RULES) {
+    if (rule.patterns.some((p) => p.test(title))) hits.push(rule.id);
+  }
+  if (!hits.length) return ["other"];
+
+  const ordered = [...hits].sort((a, b) => {
+    const ia = PRODUCT_RULES.find((r) => r.id === a).patterns
+      .map((p) => title.match(p)?.index ?? 1e9)
+      .reduce((m, n) => Math.min(m, n), 1e9);
+    const ib = PRODUCT_RULES.find((r) => r.id === b).patterns
+      .map((p) => title.match(p)?.index ?? 1e9)
+      .reduce((m, n) => Math.min(m, n), 1e9);
+    return ia - ib;
+  });
+
+  const bracket = title.match(/【([^】]+)】/);
+  if (bracket) {
+    const tagHits = [];
+    for (const rule of PRODUCT_RULES) {
+      if (rule.patterns.some((p) => p.test(bracket[1]))) tagHits.push(rule.id);
+    }
+    if (tagHits[0]) return [tagHits[0], ...ordered.filter((id) => id !== tagHits[0])];
+  }
+  return ordered;
+}
+
+function videoCategories(video) {
+  if (Array.isArray(video.categories) && video.categories.length) return video.categories;
+  return detectCategories(video.title || "");
+}
+
 function detectLevel(title = "") {
   const t = title;
   const hasBeginner = BEGINNER_RE.test(t);
@@ -91,7 +140,14 @@ function scoreVideo(video, level) {
 function withLevels(videos) {
   return videos.map((v) => {
     const level = v.level || detectLevel(v.title);
-    return { ...v, level, _score: scoreVideo({ ...v, level }, level) };
+    const categories = detectCategories(v.title || "");
+    return {
+      ...v,
+      level,
+      categories,
+      category: categories[0] || "other",
+      _score: scoreVideo({ ...v, level, category: categories[0], categories }, level),
+    };
   });
 }
 
@@ -137,7 +193,11 @@ function countsByCategory(videos) {
   const counts = Object.fromEntries(CATEGORIES.map((c) => [c.id, 0]));
   counts.all = videos.length;
   for (const v of videos) {
-    counts[v.category] = (counts[v.category] || 0) + 1;
+    const cats = videoCategories(v);
+    const unique = new Set(cats.length ? cats : ["other"]);
+    for (const id of unique) {
+      counts[id] = (counts[id] || 0) + 1;
+    }
   }
   return counts;
 }
@@ -187,7 +247,7 @@ function filteredVideos() {
   const q = state.query.trim().toLowerCase();
   let list = state.videos.filter((v) => {
     if (state.level !== "all" && v.level !== state.level) return false;
-    if (state.category !== "all" && v.category !== state.category) return false;
+    if (state.category !== "all" && !videoCategories(v).includes(state.category)) return false;
     if (!q) return true;
     return (v.title || "").toLowerCase().includes(q);
   });
@@ -219,12 +279,15 @@ function renderVideos() {
 
   els.grid.innerHTML = list
     .map((v, i) => {
-      const cat = catMeta(v.category);
+      const cats = videoCategories(v).map((id) => catMeta(id));
       const lvMeta = levelMeta(v.level);
       const neu = isNew(v);
       const views = formatViews(v.views);
       const metaBits = [formatDate(v.publishedAt), views].filter(Boolean).join(" · ");
       const pick = featured && i < FEATURED_COUNT;
+      const catChips = cats
+        .map((cat) => `<span class="cat-chip" style="--chip:${cat.color}">${escapeHtml(cat.label)}</span>`)
+        .join("");
       return `
         <a class="video-card ${pick ? "is-pick" : ""}" href="${v.url}" target="_blank" rel="noopener" style="animation-delay:${Math.min(i, 12) * 0.03}s">
           <div class="thumb-wrap">
@@ -235,7 +298,7 @@ function renderVideos() {
           </div>
           <div class="card-body">
             <div class="chip-row">
-              <span class="cat-chip" style="--chip:${cat.color}">${escapeHtml(cat.label)}</span>
+              ${catChips}
               <span class="level-chip" style="--chip:${lvMeta.color}" title="${escapeHtml(lvMeta.label)}">${escapeHtml(lvMeta.short || lvMeta.label)}</span>
             </div>
             <h2 class="card-title">${escapeHtml(v.title)}</h2>

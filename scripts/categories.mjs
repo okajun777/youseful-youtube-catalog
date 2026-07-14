@@ -88,25 +88,51 @@ const INTERMEDIATE_PATTERNS = [
   /ケーススタディ/,
 ];
 
-function matchCategory(text) {
-  if (!text) return null;
+function matchAllCategories(text) {
+  if (!text) return [];
+  const hits = [];
   for (const rule of RULES) {
-    if (rule.patterns.some((p) => p.test(text))) return rule.id;
+    if (rule.patterns.some((p) => p.test(text))) hits.push(rule.id);
   }
-  return null;
+  return hits;
+}
+
+function firstMatchIndex(title, categoryId) {
+  const rule = RULES.find((r) => r.id === categoryId);
+  if (!rule) return Number.MAX_SAFE_INTEGER;
+  let best = Number.MAX_SAFE_INTEGER;
+  for (const p of rule.patterns) {
+    const m = title.match(p);
+    if (m && m.index != null && m.index < best) best = m.index;
+  }
+  return best;
 }
 
 /**
- * タイトルから Microsoft 365 製品カテゴリを推定。
- * 説明文は宣伝文言が多く誤分類の元になるため使わない。
+ * タイトルから該当する製品カテゴリをすべて返す（出現順）。
+ * 例: 「OutlookのCopilot」→ ["outlook", "copilot"]
  */
-export function categorizeVideo(title = "") {
+export function categorizeAll(title = "") {
+  const hits = matchAllCategories(title);
+  if (!hits.length) return ["other"];
+
+  const ordered = [...hits].sort((a, b) => firstMatchIndex(title, a) - firstMatchIndex(title, b));
+
   const bracket = title.match(/【([^】]+)】/);
   if (bracket) {
-    const fromTag = matchCategory(bracket[1]);
-    if (fromTag) return fromTag;
+    const fromTag = matchAllCategories(bracket[1])[0];
+    if (fromTag) {
+      return [fromTag, ...ordered.filter((id) => id !== fromTag)];
+    }
   }
-  return matchCategory(title) || "other";
+  return ordered;
+}
+
+/**
+ * タイトルから主カテゴリIDを返す（後方互換）。
+ */
+export function categorizeVideo(title = "") {
+  return categorizeAll(title)[0] || "other";
 }
 
 /**
@@ -142,7 +168,8 @@ export function recommendScore(video, level = "all") {
   if (level === "beginner" && /超入門|初心者|入門|基礎|教科書/.test(title)) keywordBoost += 10;
   if (level === "intermediate" && /時短|活用|神ワザ|便利|実践|テクニック/.test(title)) keywordBoost += 10;
   if (level === "advanced" && /応用|上級|API|VBA|徹底攻略|完全攻略/.test(title)) keywordBoost += 10;
-  if (video.category && video.category !== "other") keywordBoost += 3;
+  const cats = video.categories || (video.category ? [video.category] : []);
+  if (cats.some((c) => c && c !== "other")) keywordBoost += 3;
   return viewScore + freshScore + keywordBoost;
 }
 
