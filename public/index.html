@@ -7,18 +7,21 @@
   <meta name="description" content="ユースフル公式YouTubeのMicrosoft 365製品カテゴリ別動画一覧。新着は24時間「最新」表示。" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="bg-grid" aria-hidden="true"></div>
-  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="atmosphere" aria-hidden="true">
+    <div class="atm-wash"></div>
+    <div class="atm-grain"></div>
+    <div class="atm-line"></div>
+  </div>
 
   <header class="site-header">
     <div class="brand-block">
-      <p class="brand-eyebrow">YouTube Catalog</p>
+      <p class="brand-eyebrow">Youseful Catalog</p>
       <h1 class="brand">ユースフル</h1>
-      <p class="tagline">Microsoft 365 実務変革の動画を、製品カテゴリ・レベル別におすすめ表示。</p>
+      <p class="tagline">Microsoft 365 の実務動画を、レベルと製品から探す。</p>
     </div>
     <div class="header-meta">
       <a class="channel-link" href="https://www.youtube.com/@youseful" target="_blank" rel="noopener">チャンネルを開く</a>
@@ -31,36 +34,47 @@
       <label class="sr-only" for="search">検索</label>
       <input id="search" type="search" placeholder="タイトルで検索…" autocomplete="off" />
     </div>
-    <div class="sort-wrap">
-      <label for="sort">並び替え</label>
-      <select id="sort">
-        <option value="recommend">おすすめ順</option>
-        <option value="new">新しい順</option>
-        <option value="old">古い順</option>
-        <option value="views">再生数順</option>
-        <option value="title">タイトル順</option>
-      </select>
+    <div class="toolbar-side">
+      <div class="sort-wrap">
+        <label for="sort">並び替え</label>
+        <select id="sort">
+          <option value="recommend">おすすめ順</option>
+          <option value="new">新しい順</option>
+          <option value="old">古い順</option>
+          <option value="views">再生数順</option>
+          <option value="title">タイトル順</option>
+        </select>
+      </div>
+      <button type="button" class="btn-sync" id="btnSync" title="最新データを再読み込み">再読み込み</button>
     </div>
-    <button type="button" class="btn-sync" id="btnSync" title="最新データを再読み込み">再読み込み</button>
   </section>
 
-  <section class="level-panel" aria-label="レベル別おすすめ">
+  <section class="level-panel shell" aria-label="レベル別おすすめ">
     <div class="level-head">
-      <h2 class="level-title">レベル別おすすめ</h2>
-      <p class="level-blurb" id="levelBlurb">自分のレベルに合う動画から始められます。</p>
+      <p class="section-index">01</p>
+      <div>
+        <h2 class="level-title">レベル別おすすめ</h2>
+        <p class="level-blurb" id="levelBlurb">自分のレベルに合う動画から始められます。</p>
+      </div>
     </div>
     <nav class="levels" id="levels"></nav>
   </section>
 
-  <nav class="categories" id="categories" aria-label="製品カテゴリ"></nav>
+  <section class="category-panel shell" aria-label="製品カテゴリ">
+    <div class="level-head compact">
+      <p class="section-index">02</p>
+      <h2 class="level-title">製品カテゴリ</h2>
+    </div>
+    <nav class="categories" id="categories"></nav>
+  </section>
 
-  <main>
+  <main class="shell">
     <p class="result-meta" id="resultMeta"></p>
     <div class="video-grid" id="videoGrid"></div>
     <p class="empty" id="empty" hidden>該当する動画がありません。</p>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer shell">
     <p>データ元: <a href="https://www.youtube.com/channel/UCRpRQ48LGfMpYojZo7Srabg" target="_blank" rel="noopener">ユースフル / 実務変革のプロ</a></p>
     <p>公開から24時間は「最新」バッジを表示。公開サイトは約30分ごとに自動更新します。</p>
   </footer>
