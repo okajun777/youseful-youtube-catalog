@@ -24,7 +24,6 @@ const LEVELS = [
 ];
 
 const NEW_MS = 36 * 60 * 60 * 1000;
-const POLL_MS = 60 * 1000;
 const FEATURED_COUNT = 8;
 const UNKNOWN_INSTRUCTOR = "不明";
 
@@ -565,9 +564,6 @@ async function boot() {
       }
     }
   }
-  setInterval(() => {
-    loadVideos().catch(() => {});
-  }, POLL_MS);
 }
 
 boot();
