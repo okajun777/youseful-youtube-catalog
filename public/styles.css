@@ -1,24 +1,16 @@
 :root {
-  /* コーポレートマークのグラデーション色 */
-  --mark-orange: #ff8a2b;
-  --mark-magenta: #d63a8c;
-  --mark-lime: #9be03a;
-  --mark-cyan: #2ec8d9;
-  --mark-blue: #2f4eb5;
-  --mark-violet: #5a3fc4;
   --ink: #1a2433;
   --ink-soft: #5a6675;
-  --paper: #f4f6fa;
-  --panel: rgba(255, 255, 255, 0.78);
+  --paper: #f5f6f8;
+  --panel: #ffffff;
   --line: rgba(26, 36, 51, 0.12);
-  --accent: #ff8a2b;
-  --accent-deep: #2f4eb5;
-  --new: #d63a8c;
+  --accent: #1a2433;
+  --accent-deep: #1a2433;
+  --new: #1a2433;
   --radius: 8px;
   --font-display: "Bricolage Grotesque", "Zen Kaku Gothic New", sans-serif;
   --font-body: "Zen Kaku Gothic New", sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --mark-gradient: linear-gradient(135deg, var(--mark-orange), var(--mark-magenta) 35%, var(--mark-violet) 55%, var(--mark-cyan) 78%, var(--mark-lime));
 }
 
 *,
@@ -36,8 +28,7 @@ body {
   min-height: 100vh;
   color: var(--ink);
   font-family: var(--font-body);
-  background:
-    linear-gradient(180deg, #f7f9ff 0%, var(--paper) 45%, #f3faf8 100%);
+  background: var(--paper);
   line-height: 1.5;
 }
 
@@ -51,70 +42,16 @@ body {
 
 .atm-wash {
   position: absolute;
-  inset: -20% -15% auto -10%;
-  height: 72vh;
-  background:
-    radial-gradient(ellipse 42% 38% at 8% 20%, rgba(255, 138, 43, 0.38), transparent 70%),
-    radial-gradient(ellipse 36% 34% at 28% 12%, rgba(214, 58, 140, 0.22), transparent 68%),
-    radial-gradient(ellipse 48% 40% at 78% 10%, rgba(46, 200, 217, 0.28), transparent 70%),
-    radial-gradient(ellipse 40% 36% at 92% 28%, rgba(47, 78, 181, 0.2), transparent 68%),
-    radial-gradient(ellipse 34% 32% at 60% 36%, rgba(155, 224, 58, 0.18), transparent 70%);
-  animation: wash-shift 20s var(--ease) infinite alternate;
-}
-
-.atm-wash::before {
-  content: "";
-  position: absolute;
-  width: min(48vw, 580px);
-  height: min(48vw, 580px);
-  right: -6%;
-  top: -14%;
-  border-radius: 42% 58% 52% 48%;
-  background: linear-gradient(160deg, rgba(46, 200, 217, 0.35), rgba(47, 78, 181, 0.22), rgba(155, 224, 58, 0.18));
-  filter: blur(10px);
-  animation: blob-float 16s var(--ease) infinite alternate;
-}
-
-.atm-wash::after {
-  content: "";
-  position: absolute;
-  width: min(36vw, 400px);
-  height: min(36vw, 400px);
-  left: 4%;
-  top: 18%;
-  border-radius: 58% 42% 46% 54%;
-  background: linear-gradient(210deg, rgba(255, 138, 43, 0.4), rgba(214, 58, 140, 0.28), transparent 70%);
-  filter: blur(8px);
-  animation: blob-float 14s var(--ease) infinite alternate-reverse;
+  inset: 0;
+  background: linear-gradient(180deg, #f7f8fa 0%, transparent 45%);
 }
 
 .atm-grain {
   position: absolute;
   inset: 0;
-  opacity: 0.14;
+  opacity: 0.1;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
   mix-blend-mode: multiply;
-}
-
-.atm-line {
-  position: absolute;
-  top: 0;
-  left: max(1rem, calc(50% - 590px));
-  width: 2px;
-  height: 42%;
-  background: var(--mark-gradient);
-  opacity: 0.55;
-  border-radius: 2px;
-}
-
-@keyframes wash-shift {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to { transform: translate3d(-2.5%, 2%, 0) scale(1.05); }
-}
-
-@keyframes blob-float {
-  from { transform: translate3d(0, 0, 0) rotate(0deg); }
-  to { transform: translate3d(3%, 4%, 0) rotate(6deg); }
 }
 
 .shell,
@@ -158,12 +95,12 @@ main,
 }
 
 .brand-eyebrow {
-  margin: 0 0 0.2rem;
+  margin: 0 0 0.15rem;
   font-family: var(--font-display);
   font-size: 0.68rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--mark-magenta);
+  color: var(--ink-soft);
   font-weight: 700;
 }
 
@@ -219,7 +156,7 @@ main,
 }
 
 .btn-sync {
-  background: var(--mark-gradient);
+  background: var(--ink);
   color: #fff;
   border-color: transparent;
   white-space: nowrap;
@@ -282,7 +219,7 @@ main,
 
 .search-wrap input:focus,
 .sort-wrap select:focus {
-  border-bottom-color: var(--mark-cyan);
+  border-bottom-color: var(--ink);
 }
 
 .sort-wrap {
@@ -342,9 +279,8 @@ main,
 
 .level-btn {
   appearance: none;
-  border: 1px solid rgba(11, 48, 65, 0.1);
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 241, 0.72));
+  border: 1px solid var(--line);
+  background: #fff;
   padding: 0.65rem 0.7rem 0.6rem;
   cursor: pointer;
   text-align: left;
@@ -358,60 +294,28 @@ main,
   gap: 0.4rem 0.5rem;
   align-items: center;
   min-height: 0;
-  isolation: isolate;
   transition:
-    transform 0.3s var(--ease),
-    border-color 0.25s ease,
-    background 0.3s ease,
-    color 0.25s ease;
+    transform 0.25s var(--ease),
+    border-color 0.2s ease,
+    background 0.25s ease,
+    color 0.2s ease;
 }
 
-.level-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--lv, var(--mark-orange)) 22%, transparent), transparent 58%);
-  opacity: 0.55;
-  z-index: -1;
-  transition: opacity 0.35s ease;
-}
-
+.level-btn::before,
 .level-btn::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: transparent;
-  transition: background 0.25s ease;
+  display: none;
 }
 
 .level-btn:hover {
   transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--lv, var(--mark-orange)) 45%, rgba(11, 48, 65, 0.12));
-}
-
-.level-btn:hover::before {
-  opacity: 0.9;
+  border-color: rgba(26, 36, 51, 0.28);
 }
 
 .level-btn.active {
-  background: linear-gradient(145deg, #1a2433 0%, #243552 100%);
-  border-color: transparent;
+  background: var(--ink);
+  border-color: var(--ink);
   color: #fff;
-  transform: translateY(-2px);
-}
-
-.level-btn.active::before {
-  opacity: 1;
-  background:
-    radial-gradient(110% 80% at 100% 0%, rgba(255, 138, 43, 0.45), rgba(46, 200, 217, 0.28), transparent 62%);
-}
-
-.level-btn.active::after {
-  background: var(--mark-gradient);
+  transform: none;
 }
 
 .level-btn-index {
@@ -419,13 +323,13 @@ main,
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: color-mix(in srgb, var(--ink) 45%, #8a9aa4);
+  color: var(--ink-soft);
   align-self: start;
   padding-top: 0.1rem;
 }
 
 .level-btn.active .level-btn-index {
-  color: var(--mark-lime);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .level-btn-body {
@@ -456,7 +360,7 @@ main,
 }
 
 .level-btn.active .level-btn-hint {
-  color: rgba(255, 248, 241, 0.72);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .level-btn-count {
@@ -482,11 +386,11 @@ main,
 }
 
 .level-btn.active .level-btn-count strong {
-  color: var(--mark-cyan);
+  color: #fff;
 }
 
 .level-btn.active .level-btn-count small {
-  color: rgba(255, 248, 241, 0.65);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .categories {
@@ -610,13 +514,13 @@ main,
 
 .badge-new {
   left: 0.55rem;
-  background: #fff0f7;
-  color: var(--mark-magenta);
+  background: #eef0f3;
+  color: var(--ink-soft);
 }
 
 .badge-pick {
   right: 0.55rem;
-  background: var(--mark-gradient);
+  background: var(--ink);
   color: #fff;
 }
 
@@ -624,7 +528,7 @@ main,
   position: absolute;
   right: 0.45rem;
   bottom: 0.45rem;
-  background: rgba(11, 48, 65, 0.82);
+  background: rgba(26, 36, 51, 0.82);
   color: #fff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -684,7 +588,7 @@ main,
 }
 
 .video-card.is-pick .thumb-wrap {
-  outline: 1px solid rgba(249, 147, 48, 0.7);
+  outline: 1px solid rgba(26, 36, 51, 0.35);
   outline-offset: 2px;
 }
 
@@ -708,11 +612,11 @@ main,
 .site-footer a {
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--mark-cyan) 55%, transparent);
+  border-bottom: 1px solid var(--line);
 }
 
 .site-footer a:hover {
-  border-bottom-color: var(--mark-magenta);
+  border-bottom-color: var(--ink);
 }
 
 .sr-only {
@@ -746,9 +650,5 @@ main,
   .header-meta {
     justify-items: start;
     text-align: left;
-  }
-
-  .atm-line {
-    display: none;
   }
 }
