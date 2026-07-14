@@ -13,67 +13,71 @@
     <div class="atm-grain"></div>
   </div>
 
-  <header class="site-header">
-    <div class="brand-block">
-      <div class="brand-row">
-        <img class="brand-mark" src="assets/youseful-mark.png" alt="" width="48" height="48" />
-        <div>
-          <p class="brand-eyebrow">Youseful Catalog</p>
-          <h1 class="brand">ユースフル</h1>
+  <div class="site-chrome">
+    <div class="site-chrome-inner">
+      <header class="site-header">
+        <div class="brand-block">
+          <div class="brand-row">
+            <img class="brand-mark" src="assets/youseful-mark.png" alt="" width="48" height="48" />
+            <div>
+              <p class="brand-eyebrow">Youseful Catalog</p>
+              <h1 class="brand">ユースフル</h1>
+            </div>
+          </div>
+          <p class="tagline">Microsoft 365 の実務動画を、レベルと製品から探す。</p>
         </div>
-      </div>
-      <p class="tagline">Microsoft 365 の実務動画を、レベルと製品から探す。</p>
-    </div>
-    <div class="header-meta">
-      <a class="channel-link" href="https://www.youtube.com/@youseful_skill" target="_blank" rel="noopener">チャンネルを開く</a>
-      <p class="sync-status" id="syncStatus">同期準備中…</p>
-    </div>
-  </header>
+        <div class="header-meta">
+          <a class="channel-link" href="https://www.youtube.com/@youseful_skill" target="_blank" rel="noopener">チャンネルを開く</a>
+          <p class="sync-status" id="syncStatus">同期準備中…</p>
+        </div>
+      </header>
 
-  <section class="toolbar" aria-label="絞り込み">
-    <div class="search-wrap">
-      <label class="sr-only" for="search">検索</label>
-      <input id="search" type="search" placeholder="タイトル・講師で検索…" autocomplete="off" />
-    </div>
-    <div class="toolbar-side">
-      <div class="sort-wrap">
-        <label for="instructorSelect">講師</label>
-        <select id="instructorSelect">
-          <option value="all">すべて</option>
-        </select>
-      </div>
-      <div class="sort-wrap">
-        <label for="sort">並び替え</label>
-        <select id="sort">
-          <option value="recommend">おすすめ順</option>
-          <option value="new">新しい順</option>
-          <option value="old">古い順</option>
-          <option value="views">再生数順</option>
-          <option value="title">タイトル順</option>
-        </select>
-      </div>
-      <button type="button" class="btn-sync" id="btnSync" title="最新データを再読み込み">再読み込み</button>
-    </div>
-  </section>
+      <section class="toolbar" aria-label="絞り込み">
+        <div class="search-wrap">
+          <label class="sr-only" for="search">検索</label>
+          <input id="search" type="search" placeholder="タイトル・講師で検索…" autocomplete="off" />
+        </div>
+        <div class="toolbar-side">
+          <div class="sort-wrap">
+            <label for="instructorSelect">講師</label>
+            <select id="instructorSelect">
+              <option value="all">すべて</option>
+            </select>
+          </div>
+          <div class="sort-wrap">
+            <label for="sort">並び替え</label>
+            <select id="sort">
+              <option value="recommend">おすすめ順</option>
+              <option value="new">新しい順</option>
+              <option value="old">古い順</option>
+              <option value="views">再生数順</option>
+              <option value="title">タイトル順</option>
+            </select>
+          </div>
+          <button type="button" class="btn-sync" id="btnSync" title="最新データを再読み込み">再読み込み</button>
+        </div>
+      </section>
 
-  <section class="level-panel shell" id="levelPanel" aria-label="レベル別おすすめ">
-    <div class="level-head">
-      <button type="button" class="panel-toggle" id="levelToggle" aria-expanded="true" aria-controls="levels">
-        <span class="panel-toggle-label">レベル別おすすめ</span>
-        <span class="panel-toggle-meta" id="levelToggleMeta"></span>
-        <span class="panel-toggle-chevron" aria-hidden="true"></span>
-      </button>
-      <p class="level-blurb" id="levelBlurb">自分のレベルに合う動画から始められます。</p>
-    </div>
-    <nav class="levels" id="levels"></nav>
-  </section>
+      <section class="level-panel" id="levelPanel" aria-label="レベル別おすすめ">
+        <div class="level-head">
+          <button type="button" class="panel-toggle" id="levelToggle" aria-expanded="true" aria-controls="levels">
+            <span class="panel-toggle-label">レベル別おすすめ</span>
+            <span class="panel-toggle-meta" id="levelToggleMeta"></span>
+            <span class="panel-toggle-chevron" aria-hidden="true"></span>
+          </button>
+          <p class="level-blurb" id="levelBlurb">自分のレベルに合う動画から始められます。</p>
+        </div>
+        <nav class="levels" id="levels"></nav>
+      </section>
 
-  <section class="category-panel shell" aria-label="製品カテゴリ">
-    <div class="level-head compact">
-      <h2 class="level-title">製品カテゴリ</h2>
+      <section class="category-panel" aria-label="製品カテゴリ">
+        <div class="level-head compact">
+          <h2 class="level-title">製品カテゴリ</h2>
+        </div>
+        <nav class="categories" id="categories"></nav>
+      </section>
     </div>
-    <nav class="categories" id="categories"></nav>
-  </section>
+  </div>
 
   <main class="shell">
     <p class="result-meta" id="resultMeta"></p>

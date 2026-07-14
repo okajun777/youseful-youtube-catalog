@@ -67,13 +67,38 @@ main,
   margin-inline: auto;
 }
 
+.site-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--paper) 94%, #fff);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 8px 24px rgba(26, 36, 51, 0.06);
+}
+
+.site-chrome-inner {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.site-chrome .site-header,
+.site-chrome .toolbar,
+.site-chrome .level-panel,
+.site-chrome .category-panel {
+  width: 100%;
+  margin-inline: 0;
+}
+
 .site-header {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 1rem;
   align-items: end;
-  padding: 1.6rem 0 0.95rem;
-  animation: rise 0.8s var(--ease) both;
+  padding: 1.1rem 0 0.75rem;
 }
 
 @keyframes rise {
@@ -185,8 +210,7 @@ main,
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: stretch;
-  padding: 0.25rem 0 0.9rem;
-  animation: rise 0.8s var(--ease) 0.06s both;
+  padding: 0.15rem 0 0.75rem;
 }
 
 .toolbar-side {
@@ -238,8 +262,11 @@ main,
 
 .level-panel,
 .category-panel {
-  padding: 0 0 0.9rem;
-  animation: rise 0.8s var(--ease) 0.1s both;
+  padding: 0 0 0.75rem;
+}
+
+.category-panel {
+  padding-bottom: 0.85rem;
 }
 
 .level-head {
