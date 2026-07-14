@@ -1,0 +1,12 @@
+{
+  "name": "youseful-youtube-catalog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ユースフル YouTube 動画一覧（Microsoft 365 カテゴリ別）",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  }
+}
