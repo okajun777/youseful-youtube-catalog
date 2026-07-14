@@ -290,7 +290,7 @@ export async function syncVideos({ full = false } = {}) {
       id: CHANNEL_ID,
       name: "ユースフル / 実務変革のプロ",
       url: CHANNEL_URL,
-      handle: "@youseful",
+      handle: "@youseful_skill",
     },
     syncedAt: new Date().toISOString(),
     videoCount: merged.length,
