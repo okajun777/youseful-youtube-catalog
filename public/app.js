@@ -17,10 +17,10 @@ const CATEGORIES = [
 ];
 
 const LEVELS = [
-  { id: "all", label: "すべて", hint: "全レベル", color: "#0b3041", blurb: "自分のレベルに合う動画から始められます。" },
-  { id: "beginner", label: "初心者", hint: "入門・基礎", color: "#f99330", blurb: "基礎・入門から安心して学べるおすすめ動画" },
-  { id: "intermediate", label: "中級者", hint: "時短・活用", color: "#0b3041", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
-  { id: "advanced", label: "上級者", hint: "応用・攻略", color: "#e07a18", blurb: "応用・自動化・深い使いこなしのおすすめ" },
+  { id: "all", label: "すべて", hint: "全レベル", color: "#2f4eb5", blurb: "自分のレベルに合う動画から始められます。" },
+  { id: "beginner", label: "初心者", hint: "入門・基礎", color: "#ff8a2b", blurb: "基礎・入門から安心して学べるおすすめ動画" },
+  { id: "intermediate", label: "中級者", hint: "時短・活用", color: "#2ec8d9", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
+  { id: "advanced", label: "上級者", hint: "応用・攻略", color: "#d63a8c", blurb: "応用・自動化・深い使いこなしのおすすめ" },
 ];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
