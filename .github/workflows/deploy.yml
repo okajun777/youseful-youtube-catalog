@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    # 約30分ごと（GitHubの都合で数分遅れることがあります）
-    - cron: "*/30 * * * *"
+    # 約1時間ごと（GitHubの都合で数分遅れることがあります）
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 permissions:
