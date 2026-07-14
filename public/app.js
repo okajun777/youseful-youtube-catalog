@@ -25,6 +25,7 @@ const state = {
   category: "all",
   query: "",
   sort: "new",
+  hasApi: false,
 };
 
 const els = {
@@ -156,14 +157,36 @@ function renderAll() {
   els.syncStatus.textContent = formatSynced(state.syncedAt);
 }
 
+async function fetchVideosPayload() {
+  const urls = [`api/videos?t=${Date.now()}`, `data/videos.json?t=${Date.now()}`];
+  let lastError = null;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) {
+        lastError = new Error(`${url}: ${res.status}`);
+        continue;
+      }
+      if (url.startsWith("api/")) state.hasApi = true;
+      return res.json();
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error("動画データの取得に失敗しました");
+}
+
 async function loadVideos() {
-  const res = await fetch(`/api/videos?t=${Date.now()}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("動画データの取得に失敗しました");
-  const data = await res.json();
+  const data = await fetchVideosPayload();
   const prevIds = new Set(state.videos.map((v) => v.id));
   state.videos = data.videos || [];
   state.syncedAt = data.syncedAt;
   renderAll();
+
+  if (state.hasApi) {
+    els.btnSync.textContent = "今すぐ取り込み";
+    els.btnSync.title = "YouTubeから今すぐ同期";
+  }
 
   if (prevIds.size) {
     const newcomers = state.videos.filter((v) => !prevIds.has(v.id));
@@ -175,16 +198,21 @@ async function loadVideos() {
 
 async function manualSync() {
   els.btnSync.disabled = true;
-  els.syncStatus.textContent = "取り込み中…";
+  els.syncStatus.textContent = state.hasApi ? "取り込み中…" : "再読み込み中…";
   try {
-    const res = await fetch("/api/sync", { method: "POST" });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || "同期失敗");
-    await loadVideos();
-    els.syncStatus.textContent =
-      (data.newCount ? `新規 ${data.newCount} 本 · ` : "更新なし · ") + formatSynced(data.syncedAt);
+    if (state.hasApi) {
+      const res = await fetch("api/sync", { method: "POST" });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "同期失敗");
+      await loadVideos();
+      els.syncStatus.textContent =
+        (data.newCount ? `新規 ${data.newCount} 本 · ` : "更新なし · ") + formatSynced(data.syncedAt);
+    } else {
+      await loadVideos();
+      els.syncStatus.textContent = `再読み込み完了 · ${formatSynced(state.syncedAt)}`;
+    }
   } catch (err) {
-    els.syncStatus.textContent = `取り込み失敗: ${err.message}`;
+    els.syncStatus.textContent = `失敗: ${err.message}`;
   } finally {
     els.btnSync.disabled = false;
   }
@@ -213,8 +241,7 @@ async function boot() {
   try {
     await loadVideos();
   } catch {
-    els.syncStatus.textContent = "初回同期を待機しています…";
-    // サーバー起動直後はデータ未生成のことがある
+    els.syncStatus.textContent = "データ読み込み待機中…";
     for (let i = 0; i < 20; i++) {
       await new Promise((r) => setTimeout(r, 1500));
       try {

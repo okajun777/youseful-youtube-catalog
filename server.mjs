@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 3456;
 const SYNC_INTERVAL_MS = Number(process.env.SYNC_INTERVAL_MS) || 5 * 60 * 1000; // 5分
 const PUBLIC = path.join(__dirname, "public");
-const DATA = path.join(__dirname, "data", "videos.json");
+const DATA = path.join(__dirname, "public", "data", "videos.json");
 
 const MIME = {
   ".html": "text/html; charset=utf-8",

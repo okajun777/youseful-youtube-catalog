@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="bg-grid" aria-hidden="true"></div>
@@ -40,7 +40,7 @@
         <option value="title">タイトル順</option>
       </select>
     </div>
-    <button type="button" class="btn-sync" id="btnSync" title="今すぐ同期">今すぐ取り込み</button>
+    <button type="button" class="btn-sync" id="btnSync" title="最新データを再読み込み">再読み込み</button>
   </section>
 
   <nav class="categories" id="categories" aria-label="製品カテゴリ"></nav>
@@ -53,9 +53,9 @@
 
   <footer class="site-footer">
     <p>データ元: <a href="https://www.youtube.com/channel/UCRpRQ48LGfMpYojZo7Srabg" target="_blank" rel="noopener">ユースフル / 実務変革のプロ</a></p>
-    <p>公開から24時間は「最新」バッジを表示。新着は約5分間隔で自動取り込みます。</p>
+    <p>公開から24時間は「最新」バッジを表示。公開サイトは約30分ごとに自動更新します。</p>
   </footer>
 
-  <script type="module" src="/app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

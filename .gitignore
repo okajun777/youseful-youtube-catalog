@@ -1,4 +1,4 @@
 node_modules/
-data/videos.json
+/data/
 rss-sample.xml
 .DS_Store

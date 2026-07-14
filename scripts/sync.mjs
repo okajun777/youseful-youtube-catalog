@@ -5,7 +5,8 @@ import { categorizeVideo } from "./categories.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const DATA_PATH = path.join(ROOT, "data", "videos.json");
+const DATA_PATH = path.join(ROOT, "public", "data", "videos.json");
+const DATA_PATH_LEGACY = path.join(ROOT, "data", "videos.json");
 
 export const CHANNEL_ID = "UCRpRQ48LGfMpYojZo7Srabg";
 const CHANNEL_URL = `https://www.youtube.com/channel/${CHANNEL_ID}`;
@@ -31,17 +32,25 @@ function decodeXml(text) {
 }
 
 function loadExisting() {
-  if (!fs.existsSync(DATA_PATH)) return { videos: [], syncedAt: null };
-  try {
-    return JSON.parse(fs.readFileSync(DATA_PATH, "utf8"));
-  } catch {
-    return { videos: [], syncedAt: null };
+  const candidates = [DATA_PATH, DATA_PATH_LEGACY];
+  for (const p of candidates) {
+    if (!fs.existsSync(p)) continue;
+    try {
+      return JSON.parse(fs.readFileSync(p, "utf8"));
+    } catch {
+      /* try next */
+    }
   }
+  return { videos: [], syncedAt: null };
 }
 
 function saveData(data) {
+  const json = JSON.stringify(data, null, 2);
   fs.mkdirSync(path.dirname(DATA_PATH), { recursive: true });
-  fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2), "utf8");
+  fs.writeFileSync(DATA_PATH, json, "utf8");
+  // ローカル互換パスにも複製
+  fs.mkdirSync(path.dirname(DATA_PATH_LEGACY), { recursive: true });
+  fs.writeFileSync(DATA_PATH_LEGACY, json, "utf8");
 }
 
 /** YouTube RSS（最新約15本・正確な公開日時） */
@@ -244,14 +253,24 @@ export async function syncVideos({ full = false } = {}) {
   const existing = loadExisting();
   const previousIds = new Set((existing.videos || []).map((v) => v.id));
 
-  const rss = await fetchRssVideos();
+  let rss = [];
+  try {
+    rss = await fetchRssVideos();
+  } catch (err) {
+    console.warn("RSS取得に失敗:", err.message);
+  }
+
   let channel = [];
-  if (full || (existing.videos || []).length < 40) {
+  if (full || (existing.videos || []).length < 40 || rss.length === 0) {
     try {
       channel = await fetchChannelVideos();
     } catch (err) {
-      console.warn("チャンネル一括取得に失敗（RSSのみ継続）:", err.message);
+      console.warn("チャンネル一括取得に失敗:", err.message);
     }
+  }
+
+  if (!rss.length && !channel.length && !(existing.videos || []).length) {
+    throw new Error("動画データを取得できませんでした");
   }
 
   const merged = mergeVideos(existing.videos || [], [...channel, ...rss]);
