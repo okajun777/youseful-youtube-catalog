@@ -679,6 +679,18 @@ main,
   font-size: 0.72rem;
 }
 
+.instructor-chip.is-inferred {
+  background: color-mix(in srgb, var(--chip, var(--ink)) 55%, #fff);
+  color: var(--ink);
+  outline: 1px solid color-mix(in srgb, var(--chip, var(--ink)) 40%, #fff);
+}
+
+.instructor-chip small {
+  margin-left: 0.12rem;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
 .card-title {
   margin: 0;
   font-size: 0.88rem;

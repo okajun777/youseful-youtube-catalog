@@ -363,10 +363,18 @@ export async function syncVideos({ full = false } = {}) {
   // 概要補完後に講師・カテゴリを再計算
   for (const v of merged) {
     if ((v.description || "").trim()) {
-      v.instructors = extractInstructors(v.description);
+      const fromDesc = extractInstructors(v.description);
+      if (fromDesc.length) {
+        v.instructors = fromDesc;
+        delete v.instructorInferred;
+        delete v.instructorScore;
+      } else if (!Array.isArray(v.instructors)) {
+        v.instructors = [];
+      }
     } else if (!Array.isArray(v.instructors)) {
       v.instructors = [];
     }
+    v.instructorSearch = instructorSearchText(v.instructors || []);
     v.categories = categorizeAll(v.title);
     v.category = v.categories[0] || "other";
     v.level = rankLevel(v.title);

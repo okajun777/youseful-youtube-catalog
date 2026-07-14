@@ -449,10 +449,13 @@ function renderVideos() {
       const metaBits = [formatDate(v.publishedAt), views].filter(Boolean).join(" · ");
       const instructors = videoInstructors(v);
       const instructorChips = instructors
-        .map(
-          (name) =>
-            `<span class="instructor-chip" style="--chip:${instructorColor(name)}" title="${escapeHtml(instructorDisplayName(name))}">${escapeHtml(name)}</span>`
-        )
+        .map((name) => {
+          const inferred = v.instructorInferred ? " is-inferred" : "";
+          const title = v.instructorInferred
+            ? `${instructorDisplayName(name)}（サムネから推定）`
+            : instructorDisplayName(name);
+          return `<span class="instructor-chip${inferred}" style="--chip:${instructorColor(name)}" title="${escapeHtml(title)}">${escapeHtml(name)}${v.instructorInferred ? "<small>?</small>" : ""}</span>`;
+        })
         .join("");
       const pick = featured && i < FEATURED_COUNT;
       const catChips = cats
