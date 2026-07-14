@@ -1,26 +1,26 @@
 const CATEGORIES = [
   { id: "all", label: "すべて", color: "#1a2433" },
-  { id: "excel", label: "Excel", color: "#1a2433" },
-  { id: "word", label: "Word", color: "#1a2433" },
-  { id: "powerpoint", label: "PowerPoint", color: "#1a2433" },
-  { id: "outlook", label: "Outlook", color: "#1a2433" },
-  { id: "teams", label: "Teams", color: "#1a2433" },
-  { id: "copilot", label: "Copilot", color: "#1a2433" },
-  { id: "power-automate", label: "Power Automate", color: "#1a2433" },
-  { id: "power-bi", label: "Power BI", color: "#1a2433" },
-  { id: "power-apps", label: "Power Apps", color: "#1a2433" },
-  { id: "sharepoint", label: "SharePoint / OneDrive", color: "#1a2433" },
-  { id: "planner", label: "Planner / To Do", color: "#1a2433" },
-  { id: "forms", label: "Forms / Loop", color: "#1a2433" },
-  { id: "onenote", label: "OneNote", color: "#1a2433" },
-  { id: "other", label: "その他", color: "#1a2433" },
+  { id: "excel", label: "Excel", color: "#217346" },
+  { id: "word", label: "Word", color: "#2b579a" },
+  { id: "powerpoint", label: "PowerPoint", color: "#c43e1c" },
+  { id: "outlook", label: "Outlook", color: "#0078d4" },
+  { id: "teams", label: "Teams", color: "#6264a7" },
+  { id: "copilot", label: "Copilot", color: "#0d9488" },
+  { id: "power-automate", label: "Power Automate", color: "#0066ff" },
+  { id: "power-bi", label: "Power BI", color: "#c9a227" },
+  { id: "power-apps", label: "Power Apps", color: "#742774" },
+  { id: "sharepoint", label: "SharePoint / OneDrive", color: "#038387" },
+  { id: "planner", label: "Planner / To Do", color: "#31752f" },
+  { id: "forms", label: "Forms / Loop", color: "#008272" },
+  { id: "onenote", label: "OneNote", color: "#7719aa" },
+  { id: "other", label: "その他", color: "#64748b" },
 ];
 
 const LEVELS = [
-  { id: "all", label: "すべて", hint: "全レベル", color: "#1a2433", blurb: "自分のレベルに合う動画から始められます。" },
-  { id: "beginner", label: "初心者", hint: "入門・基礎", color: "#1a2433", blurb: "基礎・入門から安心して学べるおすすめ動画" },
-  { id: "intermediate", label: "中級者", hint: "時短・活用", color: "#1a2433", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
-  { id: "advanced", label: "上級者", hint: "応用・攻略", color: "#1a2433", blurb: "応用・自動化・深い使いこなしのおすすめ" },
+  { id: "all", label: "すべて", short: "全", hint: "全レベル", color: "#1a2433", blurb: "自分のレベルに合う動画から始められます。" },
+  { id: "beginner", label: "初心者", short: "初", hint: "入門・基礎", color: "#0f9f6e", blurb: "基礎・入門から安心して学べるおすすめ動画" },
+  { id: "intermediate", label: "中級者", short: "中", hint: "時短・活用", color: "#2563eb", blurb: "時短・実務活用で一段レベルアップするおすすめ" },
+  { id: "advanced", label: "上級者", short: "上", hint: "応用・攻略", color: "#dc2626", blurb: "応用・自動化・深い使いこなしのおすすめ" },
 ];
 
 const NEW_MS = 36 * 60 * 60 * 1000;
@@ -159,7 +159,7 @@ function renderLevels() {
     return `<button type="button" class="level-btn ${active}" data-level="${l.id}" style="--lv:${l.color}">
       <span class="level-btn-index">${num}</span>
       <span class="level-btn-body">
-        <span class="level-btn-label">${l.label}</span>
+        <span class="level-btn-label"><span class="level-dot" style="--lv:${l.color}"></span>${l.label}</span>
         <span class="level-btn-hint">${l.hint}</span>
       </span>
       <span class="level-btn-count"><strong>${count}</strong><small>本</small></span>
@@ -235,8 +235,8 @@ function renderVideos() {
           </div>
           <div class="card-body">
             <div class="chip-row">
-              <span class="cat-chip" style="--cat:${cat.color}">${cat.label}</span>
-              <span class="level-chip" style="--lv:${lvMeta.color}">${lvMeta.label}</span>
+              <span class="cat-chip" style="--chip:${cat.color}">${escapeHtml(cat.label)}</span>
+              <span class="level-chip" style="--chip:${lvMeta.color}" title="${escapeHtml(lvMeta.label)}">${escapeHtml(lvMeta.short || lvMeta.label)}</span>
             </div>
             <h2 class="card-title">${escapeHtml(v.title)}</h2>
             <p class="card-meta">${escapeHtml(metaBits)}</p>

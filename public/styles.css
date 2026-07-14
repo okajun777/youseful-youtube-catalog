@@ -339,7 +339,9 @@ main,
 }
 
 .level-btn-label {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-weight: 800;
   font-family: var(--font-display);
   font-size: 1rem;
@@ -348,8 +350,20 @@ main,
   color: var(--ink);
 }
 
+.level-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--lv, var(--ink));
+  flex: 0 0 auto;
+}
+
 .level-btn.active .level-btn-label {
   color: #fff;
+}
+
+.level-btn.active .level-dot {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
 }
 
 .level-btn-hint {
@@ -551,28 +565,33 @@ main,
 .chip-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem 0.55rem;
+  gap: 0.35rem;
+  align-items: center;
 }
 
 .cat-chip,
 .level-chip {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
-  font-size: 0.66rem;
+  min-width: 1.7rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--chip, var(--ink));
   border: 0;
 }
 
-.cat-chip {
-  color: var(--cat, var(--accent));
-}
-
 .level-chip {
-  color: var(--lv, var(--ink-soft));
+  min-width: 1.85rem;
+  padding: 0.32rem 0.55rem;
+  font-size: 0.72rem;
 }
 
 .card-title {
