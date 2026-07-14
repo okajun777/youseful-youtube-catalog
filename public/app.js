@@ -59,6 +59,9 @@ const els = {
   categories: document.getElementById("categories"),
   instructors: document.getElementById("instructorSelect"),
   levels: document.getElementById("levels"),
+  levelPanel: document.getElementById("levelPanel"),
+  levelToggle: document.getElementById("levelToggle"),
+  levelToggleMeta: document.getElementById("levelToggleMeta"),
   levelBlurb: document.getElementById("levelBlurb"),
   grid: document.getElementById("videoGrid"),
   empty: document.getElementById("empty"),
@@ -268,7 +271,39 @@ function renderLevels() {
       <span class="level-btn-count"><strong>${count}</strong><small>本</small></span>
     </button>`;
   }).join("");
-  els.levelBlurb.textContent = levelMeta(state.level).blurb;
+  const lv = levelMeta(state.level);
+  els.levelBlurb.textContent = lv.blurb;
+  if (els.levelToggleMeta) {
+    els.levelToggleMeta.textContent = state.level === "all" ? "" : lv.label;
+  }
+}
+
+const LEVEL_COLLAPSE_KEY = "youseful-level-collapsed";
+
+function applyLevelCollapse(collapsed) {
+  if (!els.levelPanel || !els.levelToggle) return;
+  els.levelPanel.classList.toggle("is-collapsed", collapsed);
+  els.levelToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+}
+
+function initLevelCollapse() {
+  if (!els.levelToggle) return;
+  let collapsed = false;
+  try {
+    collapsed = localStorage.getItem(LEVEL_COLLAPSE_KEY) === "1";
+  } catch {
+    /* ignore */
+  }
+  applyLevelCollapse(collapsed);
+  els.levelToggle.addEventListener("click", () => {
+    const next = !els.levelPanel.classList.contains("is-collapsed");
+    applyLevelCollapse(next);
+    try {
+      localStorage.setItem(LEVEL_COLLAPSE_KEY, next ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  });
 }
 
 function renderCategories() {
@@ -515,6 +550,7 @@ els.sort.addEventListener("change", () => {
 els.btnSync.addEventListener("click", manualSync);
 
 async function boot() {
+  initLevelCollapse();
   try {
     await loadVideos();
   } catch {

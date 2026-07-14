@@ -56,9 +56,13 @@
     </div>
   </section>
 
-  <section class="level-panel shell" aria-label="レベル別おすすめ">
+  <section class="level-panel shell" id="levelPanel" aria-label="レベル別おすすめ">
     <div class="level-head">
-      <h2 class="level-title">レベル別おすすめ</h2>
+      <button type="button" class="panel-toggle" id="levelToggle" aria-expanded="true" aria-controls="levels">
+        <span class="panel-toggle-label">レベル別おすすめ</span>
+        <span class="panel-toggle-meta" id="levelToggleMeta"></span>
+        <span class="panel-toggle-chevron" aria-hidden="true"></span>
+      </button>
       <p class="level-blurb" id="levelBlurb">自分のレベルに合う動画から始められます。</p>
     </div>
     <nav class="levels" id="levels"></nav>

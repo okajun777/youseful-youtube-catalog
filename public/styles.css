@@ -243,15 +243,68 @@ main,
 }
 
 .level-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 0.75rem;
+  display: grid;
+  gap: 0.35rem;
   margin-bottom: 0.55rem;
 }
 
 .level-head.compact {
   margin-bottom: 0.45rem;
+}
+
+.panel-toggle {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+  text-align: left;
+}
+
+.panel-toggle-label {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.panel-toggle-meta {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  font-family: var(--font-display);
+}
+
+.panel-toggle-chevron {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 2px solid var(--ink-soft);
+  border-bottom: 2px solid var(--ink-soft);
+  transform: rotate(45deg);
+  transition: transform 0.2s var(--ease);
+  flex: 0 0 auto;
+}
+
+.level-panel.is-collapsed .panel-toggle-chevron {
+  transform: rotate(-135deg);
+  margin-top: 0.15rem;
+}
+
+.level-panel.is-collapsed .level-blurb,
+.level-panel.is-collapsed .levels {
+  display: none;
+}
+
+.level-panel.is-collapsed .level-head {
+  margin-bottom: 0;
 }
 
 .section-index {
