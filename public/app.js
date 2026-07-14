@@ -26,6 +26,19 @@ const LEVELS = [
 const NEW_MS = 36 * 60 * 60 * 1000;
 const POLL_MS = 60 * 1000;
 const FEATURED_COUNT = 8;
+const UNKNOWN_INSTRUCTOR = "不明";
+
+const INSTRUCTOR_COLORS = [
+  "#0f766e",
+  "#b45309",
+  "#7c3aed",
+  "#0369a1",
+  "#be185d",
+  "#4d7c0f",
+  "#c2410c",
+  "#4338ca",
+  "#a16207",
+];
 
 const BEGINNER_RE = /超入門|初心者|はじめて|初めて|ゼロから|0から|基礎から|基本から|初級|入門|基礎解説|基本知識|10分でわかる|教科書/;
 const ADVANCED_RE = /上級|応用|発展|API|VBA|マクロ(?!不要)|徹底攻略|完全攻略|プロ向け|高度な/;
@@ -36,6 +49,7 @@ const state = {
   syncedAt: null,
   category: "all",
   level: "all",
+  instructor: "all",
   query: "",
   sort: "recommend",
   hasApi: false,
@@ -43,6 +57,7 @@ const state = {
 
 const els = {
   categories: document.getElementById("categories"),
+  instructors: document.getElementById("instructors"),
   levels: document.getElementById("levels"),
   levelBlurb: document.getElementById("levelBlurb"),
   grid: document.getElementById("videoGrid"),
@@ -118,6 +133,17 @@ function detectLevel(title = "") {
   return "beginner";
 }
 
+function instructorColor(label = "") {
+  let h = 0;
+  for (let i = 0; i < label.length; i++) h = (h * 31 + label.charCodeAt(i)) >>> 0;
+  return INSTRUCTOR_COLORS[h % INSTRUCTOR_COLORS.length];
+}
+
+function videoInstructors(video) {
+  if (Array.isArray(video.instructors) && video.instructors.length) return video.instructors;
+  return [];
+}
+
 function scoreVideo(video, level) {
   if (typeof video.recommendScore === "number" && level === video.level) {
     // 同期時スコアをベースに、選択レベル用の微調整のみ
@@ -141,11 +167,13 @@ function withLevels(videos) {
   return videos.map((v) => {
     const level = v.level || detectLevel(v.title);
     const categories = detectCategories(v.title || "");
+    const instructors = videoInstructors(v);
     return {
       ...v,
       level,
       categories,
       category: categories[0] || "other",
+      instructors,
       _score: scoreVideo({ ...v, level, category: categories[0], categories }, level),
     };
   });
@@ -202,6 +230,21 @@ function countsByCategory(videos) {
   return counts;
 }
 
+function countsByInstructor(videos) {
+  const counts = { all: videos.length, [UNKNOWN_INSTRUCTOR]: 0 };
+  for (const v of videos) {
+    const list = videoInstructors(v);
+    if (!list.length) {
+      counts[UNKNOWN_INSTRUCTOR] += 1;
+      continue;
+    }
+    for (const name of new Set(list)) {
+      counts[name] = (counts[name] || 0) + 1;
+    }
+  }
+  return counts;
+}
+
 function countsByLevel(videos) {
   const counts = { all: videos.length, beginner: 0, intermediate: 0, advanced: 0 };
   for (const v of videos) {
@@ -243,13 +286,64 @@ function renderCategories() {
     .join("");
 }
 
+function renderInstructors() {
+  let base = state.videos;
+  if (state.level !== "all") base = base.filter((v) => v.level === state.level);
+  if (state.category !== "all") {
+    base = base.filter((v) => videoCategories(v).includes(state.category));
+  }
+  const counts = countsByInstructor(base);
+  const names = Object.keys(counts)
+    .filter((k) => k !== "all" && k !== UNKNOWN_INSTRUCTOR && counts[k] > 0)
+    .sort((a, b) => counts[b] - counts[a] || a.localeCompare(b, "ja"));
+
+  const items = [
+    { id: "all", label: "すべて", color: "#1a2433", count: counts.all },
+    ...names.map((name) => ({
+      id: name,
+      label: name,
+      color: instructorColor(name),
+      count: counts[name],
+    })),
+  ];
+  if (counts[UNKNOWN_INSTRUCTOR] > 0) {
+    items.push({
+      id: UNKNOWN_INSTRUCTOR,
+      label: UNKNOWN_INSTRUCTOR,
+      color: "#64748b",
+      count: counts[UNKNOWN_INSTRUCTOR],
+    });
+  }
+
+  if (state.instructor !== "all" && !items.some((i) => i.id === state.instructor)) {
+    state.instructor = "all";
+  }
+
+  els.instructors.innerHTML = items
+    .map((item) => {
+      const active = state.instructor === item.id ? "active" : "";
+      return `<button type="button" class="cat-btn ${active}" data-instructor="${escapeHtml(item.id)}" style="--cat:${item.color}">
+        <span class="cat-btn-label">${escapeHtml(item.label)}</span>
+        <span class="cat-btn-count">${item.count}</span>
+      </button>`;
+    })
+    .join("");
+}
+
 function filteredVideos() {
   const q = state.query.trim().toLowerCase();
   let list = state.videos.filter((v) => {
     if (state.level !== "all" && v.level !== state.level) return false;
     if (state.category !== "all" && !videoCategories(v).includes(state.category)) return false;
+    const instructors = videoInstructors(v);
+    if (state.instructor === UNKNOWN_INSTRUCTOR) {
+      if (instructors.length) return false;
+    } else if (state.instructor !== "all") {
+      if (!instructors.includes(state.instructor)) return false;
+    }
     if (!q) return true;
-    return (v.title || "").toLowerCase().includes(q);
+    const hay = `${v.title || ""} ${instructors.join(" ")}`.toLowerCase();
+    return hay.includes(q);
   });
 
   const levelForScore = state.level === "all" ? "intermediate" : state.level;
@@ -284,6 +378,13 @@ function renderVideos() {
       const neu = isNew(v);
       const views = formatViews(v.views);
       const metaBits = [formatDate(v.publishedAt), views].filter(Boolean).join(" · ");
+      const instructors = videoInstructors(v);
+      const instructorChips = instructors
+        .map(
+          (name) =>
+            `<span class="instructor-chip" style="--chip:${instructorColor(name)}">${escapeHtml(name)}</span>`
+        )
+        .join("");
       const pick = featured && i < FEATURED_COUNT;
       const catChips = cats
         .map((cat) => `<span class="cat-chip" style="--chip:${cat.color}">${escapeHtml(cat.label)}</span>`)
@@ -300,6 +401,7 @@ function renderVideos() {
             <div class="chip-row">
               ${catChips}
               <span class="level-chip" style="--chip:${lvMeta.color}" title="${escapeHtml(lvMeta.label)}">${escapeHtml(lvMeta.short || lvMeta.label)}</span>
+              ${instructorChips}
             </div>
             <h2 class="card-title">${escapeHtml(v.title)}</h2>
             <p class="card-meta">${escapeHtml(metaBits)}</p>
@@ -320,6 +422,7 @@ function escapeHtml(s) {
 function renderAll() {
   renderLevels();
   renderCategories();
+  renderInstructors();
   renderVideos();
   els.syncStatus.textContent = formatSynced(state.syncedAt);
 }
@@ -398,6 +501,13 @@ els.categories.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-id]");
   if (!btn) return;
   state.category = btn.dataset.id;
+  renderAll();
+});
+
+els.instructors.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-instructor]");
+  if (!btn) return;
+  state.instructor = btn.dataset.instructor;
   renderAll();
 });
 

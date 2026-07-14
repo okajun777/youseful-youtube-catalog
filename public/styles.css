@@ -573,7 +573,8 @@ main,
 }
 
 .cat-chip,
-.level-chip {
+.level-chip,
+.instructor-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;

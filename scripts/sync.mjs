@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { categorizeVideo, categorizeAll, rankLevel, recommendScore } from "./categories.mjs";
+import { extractInstructors } from "./instructors.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -12,7 +13,10 @@ export const CHANNEL_ID = "UCRpRQ48LGfMpYojZo7Srabg";
 const CHANNEL_URL = `https://www.youtube.com/channel/${CHANNEL_ID}`;
 const RSS_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
 const INNERTUBE_URL = "https://www.youtube.com/youtubei/v1/browse?prettyPrint=false";
+const PLAYER_URL = "https://www.youtube.com/youtubei/v1/player?prettyPrint=false";
 const MAX_INNERTUBE_PAGES = 25; // 約 30×25 ≒ 750 本まで蓄積
+const DESC_FETCH_CONCURRENCY = 8;
+const DESC_FETCH_LIMIT = Number(process.env.DESC_FETCH_LIMIT || 800);
 
 const CLIENT = {
   clientName: "WEB",
@@ -45,7 +49,18 @@ function loadExisting() {
 }
 
 function saveData(data) {
-  const json = JSON.stringify(data, null, 2);
+  const slim = {
+    ...data,
+    videos: (data.videos || []).map((v) => {
+      const { description, ...rest } = v;
+      return {
+        ...rest,
+        instructors: Array.isArray(v.instructors) ? v.instructors : extractInstructors(description || ""),
+        descFetched: Boolean(v.descFetched) || Boolean((description || "").trim()),
+      };
+    }),
+  };
+  const json = JSON.stringify(slim);
   fs.mkdirSync(path.dirname(DATA_PATH), { recursive: true });
   fs.writeFileSync(DATA_PATH, json, "utf8");
   // ローカル互換パスにも複製
@@ -160,6 +175,56 @@ async function innertubeBrowse(body) {
   return res.json();
 }
 
+async function fetchVideoDescription(videoId) {
+  const res = await fetch(PLAYER_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+    },
+    body: JSON.stringify({
+      context: { client: CLIENT },
+      videoId,
+    }),
+  });
+  if (!res.ok) return "";
+  const data = await res.json();
+  return data?.videoDetails?.shortDescription || "";
+}
+
+/** 概要が無い動画の description をプレイヤーAPIから埋める */
+async function enrichDescriptions(videos) {
+  const missing = videos.filter((v) => !v.descFetched && !(v.description || "").trim());
+  const targets = missing.slice(0, DESC_FETCH_LIMIT);
+  if (!targets.length) return 0;
+
+  let filled = 0;
+  for (let i = 0; i < targets.length; i += DESC_FETCH_CONCURRENCY) {
+    const batch = targets.slice(i, i + DESC_FETCH_CONCURRENCY);
+    const results = await Promise.all(
+      batch.map(async (v) => {
+        try {
+          const description = await fetchVideoDescription(v.id);
+          return { id: v.id, description };
+        } catch {
+          return { id: v.id, description: "" };
+        }
+      })
+    );
+    for (const r of results) {
+      const video = videos.find((v) => v.id === r.id);
+      if (!video) continue;
+      video.descFetched = true;
+      if (!r.description) continue;
+      video.description = r.description;
+      filled += 1;
+    }
+  }
+  if (filled) console.log(`概要を補完: ${filled} / ${missing.length} 本`);
+  return filled;
+}
+
 /** チャンネル「動画」タブをページング取得 */
 async function fetchChannelVideos() {
   const videos = [];
@@ -243,11 +308,17 @@ function mergeVideos(existing, incoming) {
     .map((v) => {
       const categories = categorizeAll(v.title);
       const level = rankLevel(v.title);
+      const instructors = (v.description || "").trim()
+        ? extractInstructors(v.description)
+        : Array.isArray(v.instructors)
+          ? v.instructors
+          : [];
       return {
         ...v,
         categories,
         category: categories[0] || "other",
         level,
+        instructors,
         recommendScore: Math.round(recommendScore({ ...v, category: categories[0], categories, level }, level) * 10) / 10,
       };
     })
@@ -283,6 +354,22 @@ export async function syncVideos({ full = false } = {}) {
   }
 
   const merged = mergeVideos(existing.videos || [], [...channel, ...rss]);
+  await enrichDescriptions(merged);
+
+  // 概要補完後に講師・カテゴリを再計算
+  for (const v of merged) {
+    if ((v.description || "").trim()) {
+      v.instructors = extractInstructors(v.description);
+    } else if (!Array.isArray(v.instructors)) {
+      v.instructors = [];
+    }
+    v.categories = categorizeAll(v.title);
+    v.category = v.categories[0] || "other";
+    v.level = rankLevel(v.title);
+    v.recommendScore =
+      Math.round(recommendScore({ ...v, category: v.category, categories: v.categories, level: v.level }, v.level) * 10) / 10;
+  }
+
   const newVideos = merged.filter((v) => !previousIds.has(v.id));
 
   const payload = {
