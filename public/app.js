@@ -235,7 +235,7 @@ function renderCategories() {
   els.categories.innerHTML = visible
     .map((c) => {
       const active = state.category === c.id ? "active" : "";
-      return `<button type="button" class="cat-btn ${active}" data-id="${c.id}">
+      return `<button type="button" class="cat-btn ${active}" data-id="${c.id}" style="--cat:${c.color}">
         <span class="cat-btn-label">${c.label}</span>
         <span class="cat-btn-count">${counts[c.id] || 0}</span>
       </button>`;

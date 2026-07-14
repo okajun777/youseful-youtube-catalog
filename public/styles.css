@@ -279,8 +279,8 @@ main,
 
 .level-btn {
   appearance: none;
-  border: 1px solid var(--line);
-  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--lv, var(--ink)) 32%, #fff);
+  background: color-mix(in srgb, var(--lv, var(--ink)) 10%, #fff);
   padding: 0.65rem 0.7rem 0.6rem;
   cursor: pointer;
   text-align: left;
@@ -308,12 +308,13 @@ main,
 
 .level-btn:hover {
   transform: translateY(-2px);
-  border-color: rgba(26, 36, 51, 0.28);
+  border-color: color-mix(in srgb, var(--lv, var(--ink)) 55%, #fff);
+  background: color-mix(in srgb, var(--lv, var(--ink)) 16%, #fff);
 }
 
 .level-btn.active {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--lv, var(--ink));
+  border-color: var(--lv, var(--ink));
   color: #fff;
   transform: none;
 }
@@ -323,7 +324,7 @@ main,
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.12em;
-  color: var(--ink-soft);
+  color: color-mix(in srgb, var(--lv, var(--ink-soft)) 70%, var(--ink-soft));
   align-self: start;
   padding-top: 0.1rem;
 }
@@ -347,7 +348,7 @@ main,
   font-size: 1rem;
   letter-spacing: -0.02em;
   line-height: 1.15;
-  color: var(--ink);
+  color: var(--lv, var(--ink));
 }
 
 .level-dot {
@@ -363,7 +364,8 @@ main,
 }
 
 .level-btn.active .level-dot {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+  background: #fff;
+  box-shadow: none;
 }
 
 .level-btn-hint {
@@ -374,7 +376,7 @@ main,
 }
 
 .level-btn.active .level-btn-hint {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .level-btn-count {
@@ -390,7 +392,7 @@ main,
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--ink);
+  color: var(--lv, var(--ink));
 }
 
 .level-btn-count small {
@@ -404,7 +406,7 @@ main,
 }
 
 .level-btn.active .level-btn-count small {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .categories {
@@ -415,9 +417,9 @@ main,
 
 .cat-btn {
   appearance: none;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--cat, var(--ink)) 35%, #fff);
+  background: color-mix(in srgb, var(--cat, var(--ink)) 10%, #fff);
+  color: var(--cat, var(--ink));
   font: inherit;
   padding: 0.55rem 0.9rem;
   border-radius: 999px;
@@ -436,12 +438,13 @@ main,
 
 .cat-btn:hover {
   transform: translateY(-2px);
-  border-color: rgba(26, 36, 51, 0.28);
+  border-color: color-mix(in srgb, var(--cat, var(--ink)) 55%, #fff);
+  background: color-mix(in srgb, var(--cat, var(--ink)) 18%, #fff);
 }
 
 .cat-btn.active {
-  background: var(--ink);
-  border-color: var(--ink);
+  background: var(--cat, var(--ink));
+  border-color: var(--cat, var(--ink));
   color: #fff;
 }
 
@@ -457,12 +460,12 @@ main,
   font-family: var(--font-display);
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--ink-soft);
+  color: color-mix(in srgb, var(--cat, var(--ink-soft)) 55%, var(--ink-soft));
   line-height: 1;
 }
 
 .cat-btn.active .cat-btn-count {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .result-meta {
